@@ -2,37 +2,35 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\School;
 use Hashids\Hashids;
-use App\Models\ListAgency;
 use App\Models\SchoolCampus;
-use App\Models\SchoolCourse;
 use App\Models\SchoolSemester;
 use App\Models\SchoolCourseProspectus;
 use Illuminate\Http\Request;
-use App\Http\Resources\DefaultResource;
-use App\Http\Resources\School\IndexResource;
-use App\Http\Resources\School\CourseResource;
-use App\Http\Requests\SchoolProfileRequest;
 use App\Http\Traits\SchoolTrait;
+use App\Http\Resources\DefaultResource;
+use App\Http\Requests\SchoolProfileRequest;
+use App\Http\Resources\Schools\IndexResource;
+use App\Http\Resources\Schools\CourseResource;
 
 class SchoolController extends Controller
 {
     use SchoolTrait; 
 
     public function index(Request $request){
-        if($request->search){
+        if($request->lists){
             $data = IndexResource::collection(
                 SchoolCampus::query()
-                ->with('school','semesters.semester','courses')
+                ->with('school.class','term:id,name','grading:id,name')
+                ->with('region:region,code','province:name,code','municipality:name,code')
                 ->when($request->region, function ($query, $region) {
-                    $query->whereHas('municipality',function ($query) use ($region) {
-                        $query->whereHas('province',function ($query) use ($region) {
-                            $query->whereHas('region',function ($query) use ($region) {
-                                $query->where('id',$region);
-                            });
-                        });
-                    });
+                    $query->where('region_code',$region);
+                })
+                ->when($request->province, function ($query, $province) {
+                    $query->where('province_code',$province);
+                })
+                ->when($request->municipality, function ($query, $municipality) {
+                    $query->where('municipality_code',$municipality);
                 })
                 ->when($request->keyword, function ($query, $keyword) {
                     $query->whereHas('school',function ($query) use ($keyword) {
@@ -44,25 +42,12 @@ class SchoolController extends Controller
                 ->whereHas('school',function ($query) {
                     $query->orderBy('name','ASC');
                 })
-                ->paginate(10)
+                ->paginate($request->counts)
                 ->withQueryString()
             );
             return $data;
         }else{
-            $agency_id = config('app.agency');
-            $agency = ListAgency::with('region')->where('id',$agency_id)->first();
-            $region = $agency->region_code;
-
-            $count = SchoolCampus::query()
-            ->whereHas('municipality',function ($query) use ($region) {
-                $query->whereHas('province',function ($query) use ($region) {
-                    $query->whereHas('region',function ($query) use ($region) {
-                        $query->where('code',$region);
-                    });
-                });
-            })->count();
-
-            return inertia('Modules/Schools/Index',['agency' => $agency, 'count' => $count]);
+            return inertia('Modules/Schools/Index');
         }
     }
 
@@ -73,8 +58,9 @@ class SchoolController extends Controller
         
         $data = new IndexResource(
             SchoolCampus::with('school')
-            ->with('courses.course','courses.prospectuses')
-            ->with('semesters.semester')
+            ->with('school.class','term:id,name','grading:id,name')
+            ->with('semesters.semester','courses.course')
+            ->with('region:region,code','province:name,code','municipality:name,code')
             ->where('id',$id[0])->first()
         );
 

@@ -76359,6 +76359,533 @@ vue3_apexcharts.install = install;
 
 /***/ }),
 
+/***/ "./node_modules/vue3-loading-overlay/dist/index.js":
+/*!*********************************************************!*\
+  !*** ./node_modules/vue3-loading-overlay/dist/index.js ***!
+  \*********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   "useLoading": () => (/* binding */ useLoading)
+/* harmony export */ });
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
+/**
+ * Vue 3 Loading Overlay 0.0.0
+ * (c) 2020
+ * @license MIT
+ */
+
+
+var script = (0,vue__WEBPACK_IMPORTED_MODULE_0__.defineComponent)({
+    name: "spinner",
+    props: {
+        color: {
+            type: String,
+            default: "#000",
+        },
+        height: {
+            type: Number,
+            default: 64,
+        },
+        width: {
+            type: Number,
+            default: 64,
+        },
+    },
+});
+
+const _hoisted_1 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("g", {
+  fill: "none",
+  "fill-rule": "evenodd"
+}, [
+  /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("g", {
+    transform: "translate(1 1)",
+    "stroke-width": "2"
+  }, [
+    /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("circle", {
+      "stroke-opacity": ".25",
+      cx: "18",
+      cy: "18",
+      r: "18"
+    }),
+    /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("path", { d: "M36 18c0-9.94-8.06-18-18-18" }, [
+      /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("animateTransform", {
+        attributeName: "transform",
+        type: "rotate",
+        from: "0 18 18",
+        to: "360 18 18",
+        dur: "0.8s",
+        repeatCount: "indefinite"
+      })
+    ])
+  ])
+], -1 /* HOISTED */);
+
+function render(_ctx, _cache, $props, $setup, $data, $options) {
+  return ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("svg", {
+    viewBox: "0 0 38 38",
+    xmlns: "http://www.w3.org/2000/svg",
+    width: _ctx.width,
+    height: _ctx.height,
+    stroke: _ctx.color
+  }, [
+    _hoisted_1
+  ], 8 /* PROPS */, ["width", "height", "stroke"]))
+}
+
+script.render = render;
+script.__file = "src/loaders/Spinner.vue";
+
+var script$1 = (0,vue__WEBPACK_IMPORTED_MODULE_0__.defineComponent)({
+  name: "dots",
+  props: {
+    color: {
+      type: String,
+      default: "#000",
+    },
+    height: {
+      type: Number,
+      default: 240,
+    },
+    width: {
+      type: Number,
+      default: 60,
+    },
+  },
+});
+
+const _hoisted_1$1 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("circle", {
+  cx: "15",
+  cy: "15",
+  r: "15"
+}, [
+  /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("animate", {
+    attributeName: "r",
+    from: "15",
+    to: "15",
+    begin: "0s",
+    dur: "0.8s",
+    values: "15;9;15",
+    calcMode: "linear",
+    repeatCount: "indefinite"
+  }),
+  /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("animate", {
+    attributeName: "fill-opacity",
+    from: "1",
+    to: "1",
+    begin: "0s",
+    dur: "0.8s",
+    values: "1;.5;1",
+    calcMode: "linear",
+    repeatCount: "indefinite"
+  })
+], -1 /* HOISTED */);
+const _hoisted_2 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("circle", {
+  cx: "60",
+  cy: "15",
+  r: "9",
+  "fill-opacity": "0.3"
+}, [
+  /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("animate", {
+    attributeName: "r",
+    from: "9",
+    to: "9",
+    begin: "0s",
+    dur: "0.8s",
+    values: "9;15;9",
+    calcMode: "linear",
+    repeatCount: "indefinite"
+  }),
+  /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("animate", {
+    attributeName: "fill-opacity",
+    from: "0.5",
+    to: "0.5",
+    begin: "0s",
+    dur: "0.8s",
+    values: ".5;1;.5",
+    calcMode: "linear",
+    repeatCount: "indefinite"
+  })
+], -1 /* HOISTED */);
+const _hoisted_3 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("circle", {
+  cx: "105",
+  cy: "15",
+  r: "15"
+}, [
+  /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("animate", {
+    attributeName: "r",
+    from: "15",
+    to: "15",
+    begin: "0s",
+    dur: "0.8s",
+    values: "15;9;15",
+    calcMode: "linear",
+    repeatCount: "indefinite"
+  }),
+  /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("animate", {
+    attributeName: "fill-opacity",
+    from: "1",
+    to: "1",
+    begin: "0s",
+    dur: "0.8s",
+    values: "1;.5;1",
+    calcMode: "linear",
+    repeatCount: "indefinite"
+  })
+], -1 /* HOISTED */);
+
+function render$1(_ctx, _cache, $props, $setup, $data, $options) {
+  return ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("svg", {
+    viewBox: "0 0 120 30",
+    xmlns: "http://www.w3.org/2000/svg",
+    fill: _ctx.color,
+    width: _ctx.width,
+    height: _ctx.height
+  }, [
+    _hoisted_1$1,
+    _hoisted_2,
+    _hoisted_3
+  ], 8 /* PROPS */, ["fill", "width", "height"]))
+}
+
+script$1.render = render$1;
+script$1.__file = "src/loaders/Dots.vue";
+
+var script$2 = (0,vue__WEBPACK_IMPORTED_MODULE_0__.defineComponent)({
+    name: "bars",
+    props: {
+        color: {
+            type: String,
+            default: "#000",
+        },
+        height: {
+            type: Number,
+            default: 40,
+        },
+        width: {
+            type: Number,
+            default: 40,
+        },
+    },
+});
+
+const _hoisted_1$2 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("rect", {
+  x: "0",
+  y: "13",
+  width: "4",
+  height: "5"
+}, [
+  /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("animate", {
+    attributeName: "height",
+    attributeType: "XML",
+    values: "5;21;5",
+    begin: "0s",
+    dur: "0.6s",
+    repeatCount: "indefinite"
+  }),
+  /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("animate", {
+    attributeName: "y",
+    attributeType: "XML",
+    values: "13; 5; 13",
+    begin: "0s",
+    dur: "0.6s",
+    repeatCount: "indefinite"
+  })
+], -1 /* HOISTED */);
+const _hoisted_2$1 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("rect", {
+  x: "10",
+  y: "13",
+  width: "4",
+  height: "5"
+}, [
+  /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("animate", {
+    attributeName: "height",
+    attributeType: "XML",
+    values: "5;21;5",
+    begin: "0.15s",
+    dur: "0.6s",
+    repeatCount: "indefinite"
+  }),
+  /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("animate", {
+    attributeName: "y",
+    attributeType: "XML",
+    values: "13; 5; 13",
+    begin: "0.15s",
+    dur: "0.6s",
+    repeatCount: "indefinite"
+  })
+], -1 /* HOISTED */);
+const _hoisted_3$1 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("rect", {
+  x: "20",
+  y: "13",
+  width: "4",
+  height: "5"
+}, [
+  /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("animate", {
+    attributeName: "height",
+    attributeType: "XML",
+    values: "5;21;5",
+    begin: "0.3s",
+    dur: "0.6s",
+    repeatCount: "indefinite"
+  }),
+  /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("animate", {
+    attributeName: "y",
+    attributeType: "XML",
+    values: "13; 5; 13",
+    begin: "0.3s",
+    dur: "0.6s",
+    repeatCount: "indefinite"
+  })
+], -1 /* HOISTED */);
+
+function render$2(_ctx, _cache, $props, $setup, $data, $options) {
+  return ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("svg", {
+    xmlns: "http://www.w3.org/2000/svg",
+    viewBox: "0 0 30 30",
+    height: _ctx.height,
+    width: _ctx.width,
+    fill: _ctx.color
+  }, [
+    _hoisted_1$2,
+    _hoisted_2$1,
+    _hoisted_3$1
+  ], 8 /* PROPS */, ["height", "width", "fill"]))
+}
+
+script$2.render = render$2;
+script$2.__file = "src/loaders/Bars.vue";
+
+var Loaders = {
+    Spinner: script,
+    Dots: script$1,
+    Bars: script$2,
+};
+
+var script$3 = (0,vue__WEBPACK_IMPORTED_MODULE_0__.defineComponent)({
+    name: "vue-loading",
+    props: {
+        active: Boolean,
+        programmatic: Boolean,
+        container: [Object, Function, HTMLElement],
+        isFullPage: {
+            type: Boolean,
+            default: true,
+        },
+        enforceFocus: {
+            type: Boolean,
+            default: true,
+        },
+        lockScroll: {
+            type: Boolean,
+            default: false,
+        },
+        transition: {
+            type: String,
+            default: "fade",
+        },
+        /**
+         * Allow user to hide the loader
+         */
+        canCancel: Boolean,
+        /**
+         * Do something on cancel
+         */
+        onCancel: {
+            type: Function,
+            default: () => {
+                return;
+            },
+        },
+        color: String,
+        backgroundColor: String,
+        blur: {
+            type: String,
+            default: "2px",
+        },
+        opacity: Number,
+        width: Number,
+        height: Number,
+        zIndex: {
+            type: Number,
+            default: 100,
+        },
+        loader: {
+            type: String,
+            default: "spinner",
+        },
+    },
+    setup(props, context) {
+        const isActive = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)(props.active);
+        const bgStyle = (0,vue__WEBPACK_IMPORTED_MODULE_0__.computed)(() => {
+            let ret = {
+                background: props.backgroundColor,
+                opacity: props.opacity,
+                backdropFilter: `blur(${props.blur})`,
+            };
+            return ret;
+        });
+        const hide = () => {
+            // Timeout for the animation complete before destroying
+            if (props.programmatic) {
+                isActive.value = false;
+                setTimeout(() => {
+                    return;
+                }, 150);
+            }
+        };
+        const cancel = () => {
+            if (!props.canCancel || !isActive.value)
+                return;
+            hide();
+            props.onCancel();
+        };
+        const keyUp = (event) => {
+            if (event.keyCode === 27) {
+                cancel();
+            }
+        };
+        const disableScroll = () => {
+            if (props.isFullPage && props.lockScroll) {
+                document.body.classList.add("vld-shown");
+            }
+        };
+        const enableScroll = () => {
+            if (props.isFullPage && props.lockScroll) {
+                document.body.classList.remove("vld-shown");
+            }
+        };
+        (0,vue__WEBPACK_IMPORTED_MODULE_0__.onMounted)(() => {
+            if (props.programmatic) {
+                isActive.value = true;
+                document.addEventListener("keyup", keyUp);
+            }
+        });
+        (0,vue__WEBPACK_IMPORTED_MODULE_0__.onUnmounted)(() => {
+            document.removeEventListener("keyup", keyUp);
+        });
+        (0,vue__WEBPACK_IMPORTED_MODULE_0__.watch)(() => props.active, () => {
+            isActive.value = props.active;
+        });
+        (0,vue__WEBPACK_IMPORTED_MODULE_0__.watch)(isActive, () => {
+            if (isActive.value) {
+                disableScroll();
+            }
+            else {
+                enableScroll();
+            }
+        });
+        return {
+            isActive,
+            bgStyle,
+            hide,
+            cancel,
+        };
+    },
+    components: Loaders,
+});
+
+const _hoisted_1$3 = { class: "vld-icon" };
+
+function render$3(_ctx, _cache, $props, $setup, $data, $options) {
+  return ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Transition, {
+    ref: "root",
+    name: _ctx.transition
+  }, {
+    default: (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(() => [
+      (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", {
+        tabindex: "0",
+        class: ["vld-overlay is-active", { 'is-full-page': _ctx.isFullPage }],
+        "aria-busy": _ctx.isActive,
+        "aria-label": "Loading",
+        style: { zIndex: _ctx.zIndex }
+      }, [
+        (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", {
+          class: "vld-background",
+          onClick: _cache[1] || (_cache[1] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)((...args) => (_ctx.cancel && _ctx.cancel(...args)), ["prevent"])),
+          style: _ctx.bgStyle
+        }, null, 4 /* STYLE */),
+        (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_1$3, [
+          (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderSlot)(_ctx.$slots, "before"),
+          (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderSlot)(_ctx.$slots, "default", {}, () => [
+            ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)((0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveDynamicComponent)(_ctx.loader), {
+              color: _ctx.color,
+              width: _ctx.width,
+              height: _ctx.height
+            }, null, 8 /* PROPS */, ["color", "width", "height"]))
+          ]),
+          (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderSlot)(_ctx.$slots, "after")
+        ])
+      ], 14 /* CLASS, STYLE, PROPS */, ["aria-busy"]), [
+        [vue__WEBPACK_IMPORTED_MODULE_0__.vShow, _ctx.isActive]
+      ])
+    ]),
+    _: 3 /* FORWARDED */
+  }, 8 /* PROPS */, ["name"]))
+}
+
+script$3.render = render$3;
+script$3.__file = "src/main/Component.vue";
+
+function createComponent(component, props, parentContainer) {
+    const vnode = (0,vue__WEBPACK_IMPORTED_MODULE_0__.h)(component, props);
+    const container = document.createElement('div');
+    parentContainer.appendChild(container);
+    (0,vue__WEBPACK_IMPORTED_MODULE_0__.render)(vnode, container);
+    return vnode.component;
+}
+function removeElement(el) {
+    var _a;
+    if (typeof el.remove !== 'undefined') {
+        el.remove();
+    }
+    else {
+        (_a = el.parentNode) === null || _a === void 0 ? void 0 : _a.removeChild(el);
+    }
+}
+function useLoading(globalProps = {}, globalSlots = {}) {
+    let instance = null;
+    const loading = {
+        show(props = globalProps, slots = globalSlots) {
+            const forceProps = {
+                programmatic: true,
+                lockScroll: true,
+                isFullPage: false
+            };
+            const propsData = Object.assign({}, globalProps, props, forceProps);
+            let container = propsData.container;
+            if (!propsData.container) {
+                container = document.body;
+                propsData.isFullPage = true;
+            }
+            instance = createComponent(script$3, propsData, container);
+            const mergedSlots = Object.assign({}, globalSlots, slots);
+            Object.keys(mergedSlots).map((name) => {
+                if (instance != null) {
+                    instance.slots[name] = mergedSlots[name];
+                }
+            });
+        },
+        hide() {
+            if (instance != null) {
+                instance.ctx.hide();
+                let root = instance.vnode.el;
+                removeElement(root.parentElement);
+            }
+        }
+    };
+    return loading;
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (script$3);
+
+
+
+/***/ }),
+
 /***/ "./node_modules/vue/dist/vue.esm-bundler.js":
 /*!**************************************************!*\
   !*** ./node_modules/vue/dist/vue.esm-bundler.js ***!

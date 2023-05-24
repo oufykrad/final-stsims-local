@@ -2,7 +2,7 @@
     <div class="offcanvas offcanvas-start" :class="showOff ? 'show' : 'hiding'"  tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
         <div class="offcanvas-header bg-primary">
             <h5 class="offcanvas-title text-white" id="offcanvasExampleLabel">
-                Scholar Fliters
+                Scholar Filter
             </h5>
             <button type="button" class="btn-close text-white" @click="showOff = false"></button>
         </div>
@@ -109,7 +109,7 @@
             <div class="offcanvas-footer border-top p-3 text-center hstack gap-2">
                 <b-button @click="clear()" type="button" variant="light" class="w-100">Clear Filter</b-button>
                 <b-button @click="fill()" type="button" variant="success" class="w-100">
-                    Filters
+                    Filter
                 </b-button>
             </div>
         </b-form>

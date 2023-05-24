@@ -7,8 +7,8 @@ use App\Models\Scholar;
 use App\Models\SchoolCampus;
 use App\Models\SchoolCourse;
 use App\Models\SchoolSemester;
-use App\Http\Resources\School\SemesterResource;
-use App\Http\Resources\School\CoursesResource;
+use App\Http\Resources\Schools\SemesterResource;
+use App\Http\Resources\Schools\CoursesResource;
 use App\Http\Resources\DefaultResource;
 
 trait SchoolTrait { 

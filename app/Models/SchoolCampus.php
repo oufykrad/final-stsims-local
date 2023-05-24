@@ -54,6 +54,11 @@ class SchoolCampus extends Model
         return $this->hasMany('App\Models\SchoolCourse', 'school_id');
     } 
 
+    public function semesters()
+    {
+        return $this->hasMany('App\Models\SchoolSemester', 'school_id');
+    } 
+
     public function term()
     {
         return $this->belongsTo('App\Models\ListDropdown', 'term_id', 'id');

@@ -36,12 +36,12 @@
                         <span data-key="t-students">Staffs</span>
                     </Link>
                 </li>    
-                <li class="nav-item">
+                <!-- <li class="nav-item">
                     <Link class="nav-link menu-link" :class="{'active': $page.component.startsWith('Modules/Course') }" href="/courses">
                         <i class='bx bxs-graduation'></i>
                         <span data-key="t-students">Course</span>
                     </Link>
-                </li>     
+                </li>      -->
                 <li class="nav-item">
                     <Link class="nav-link menu-link" :class="{'active': $page.component.startsWith('Modules/School') }" href="/schools">
                         <i class='bx bxs-school'></i>

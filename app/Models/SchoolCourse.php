@@ -28,8 +28,8 @@ class SchoolCourse extends Model
         return $this->belongsTo('App\Models\SchoolCampus', 'school_id', 'id');
     }
 
-    public function skool()
+    public function prospectuses()
     {
-        return $this->belongsTo('App\Models\SchoolCampus', 'school_id', 'id');
-    }
+        return $this->hasMany('App\Models\SchoolCourseProspectus', 'school_course_id');
+    } 
 }

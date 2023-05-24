@@ -36,14 +36,14 @@ class ScholarProfile extends Model
     //     return date('M d, Y', strtotime($value));
     // }
 
-    public function getSexAttribute($value)
-    {
-        switch ($value)
-		{
-			case 'M': $sex='Male';break;
-			case 'F': $sex='Female';break;
-			default:$sex=NULL;break;
-		}
-        return $sex;
-    }
+    // public function getSexAttribute($value)
+    // {
+    //     switch ($value)
+	// 	{
+	// 		case 'M': $sex='Male';break;
+	// 		case 'F': $sex='Female';break;
+	// 		default:$sex=NULL;break;
+	// 	}
+    //     return $sex;
+    // }
 }
