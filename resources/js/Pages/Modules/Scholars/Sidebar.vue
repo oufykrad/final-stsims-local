@@ -3,22 +3,12 @@
         <div class="table-responsive">
             <table class="table table-borderless table-sm table-centered align-middle table-nowrap">
                 <tbody class="border-0">
-                    <tr>
+                    <tr v-for="(count,index) in total" v-bind:key="index">
                         <td>
-                            <h4 class="text-truncate fs-14 fs-medium mb-0">
-                                <i class="ri-stop-fill align-middle fs-18 text-primary me-2"></i>Total Scholars
-                            </h4>
+                            <h4 class="text-truncate fs-14 fs-medium mb-0"><i class="ri-stop-fill align-middle fs-18 me-2" :class="colors[index]"></i>{{options[index]}}</h4>
                         </td>
                         <td class="text-end">
-                            <p class="text-primary fw-bold mb-0">{{total}}</p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <h4 class="text-truncate fs-14 fs-medium mb-0"><i class="ri-stop-fill align-middle fs-18 text-success me-2"></i>Ongoing Scholars</h4>
-                        </td>
-                        <td class="text-end">
-                            <p class="text-success fw-bold mb-0">{{ongoing}}</p>
+                            <p class="fw-bold mb-0" :class="colors[index]">{{count}}</p>
                         </td>
                     </tr>
                 </tbody>
@@ -63,11 +53,25 @@ export default {
     components : { Print, Import, Sync },
     data(){
         return {
-            total: 0,
-            ongoing: 0
+            currentUrl: window.location.origin,
+            total: [],
+            options: ['Ongoing Scholars','Graduated Scholars','Total Scholars'],
+            colors: ['text-primary','text-info','text-success']
         }
     },
+    created(){
+        this.fetch();
+    },
     methods : {
+        fetch(){
+            axios.get(this.currentUrl + '/scholars', {
+                params: { type: 'counts'}
+            })
+            .then(response => {
+                this.total = response.data;
+            })
+            .catch(err => console.log(err));
+        },
         print(type){
             this.$refs.print.set(type);
         },

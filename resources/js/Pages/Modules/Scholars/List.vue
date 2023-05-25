@@ -17,9 +17,12 @@
                     <option :value="list.id" v-for="list in status_list" v-bind:key="list.id">{{list.name}}</option>
                 </select>
                 <input type="text" v-model="year" placeholder="Year Awarded" class="form-control" style="width: 100px;">
-                 <b-button type="button" variant="primary" @click="show()">
-                <i class="ri-filter-3-line align-bottom me-1"></i> Fliters
-            </b-button>
+                <span @click="refresh" class="input-group-text" v-b-tooltip.hover title="Refresh" style="cursor: pointer;"> 
+                    <i class="bx bx-refresh search-icon"></i>
+                </span>
+                <b-button type="button" variant="primary" @click="show()">
+                    <i class="ri-filter-3-line align-bottom me-1"></i> Fliters
+                </b-button>
             </div>
         </b-col>
     </b-row>
@@ -47,21 +50,23 @@
                         </div>
                     </td>
                     <td>
-                        <h5 class="fs-13 mb-0 text-dark">{{user.profile.lastname}}, {{user.profile.firstname}} {{user.profile.middlename[0]}}.</h5>
+                        <h5 class="fs-13 mb-0 text-dark">{{user.profile.name}}</h5>
                         <p class="fs-12 text-muted mb-0">{{user.spas_id}}</p>
                     </td>
                     <td class="text-center">
                         <p class="fs-12 mb-n1 text-dark">{{(user.education.school instanceof Object) ? user.education.school.name : user.education.school}}</p>
                         <p class="fs-12 text-muted mb-0">{{(user.education.course instanceof Object) ? user.education.course.name : user.education.course}}</p>
                     </td>
-                    <td class="text-center">{{user.program.name}}</td>
+                    <td class="text-center">{{user.program}}</td>
                     <td class="text-center">{{user.awarded_year}}</td>
                     <td class="text-center">
                         <span :class="'badge '+user.status.color+' '+user.status.others">{{user.status.name}}</span>
                     </td>
                     <td class="text-end">
                         <b-button v-if="user.user == null" @click="authenticate(user)" variant="soft-primary" v-b-tooltip.hover title="Create Scholar Account" size="sm" class="edit-list me-1"><i class="ri-user-add-fill align-bottom"></i> </b-button>
-                        <b-button v-if="user.is_completed == 0" @click="update(user)" variant="soft-warning" v-b-tooltip.hover title="Update" size="sm" class="remove-list me-1"><i class="ri-error-warning-fill align-bottom"></i></b-button>
+                        <b-button v-if="user.is_completed == 0" @click="update(user,'account_no')" variant="soft-danger" v-b-tooltip.hover title="Update Account No." size="sm" class="remove-list me-1"><i class="ri-bank-card-2-fill align-bottom"></i></b-button>
+                        <b-button v-if="user.education.is_completed == 0" @click="update(user,'education')" variant="soft-danger" v-b-tooltip.hover title="Update Education" size="sm" class="remove-list me-1"><i class="ri-hotel-fill align-bottom"></i></b-button>
+                        <b-button v-if="user.addresses[0].is_completed == 0" @click="update(user,'address')" variant="soft-danger" v-b-tooltip.hover title="Update Address" size="sm" class="remove-list me-1"><i class="ri-map-pin-fill align-bottom"></i></b-button>
                         <Link v-if="user.is_completed == 1" :href="`/scholars/${user.code}`"><b-button variant="soft-info" v-b-tooltip.hover title="View" size="sm" class="remove-list me-1"><i class="ri-eye-fill align-bottom"></i></b-button></Link>
                         <!-- <b-button variant="soft-primary" v-b-tooltip.hover title="Edit" size="sm" class="edit-list"><i class="ri-pencil-fill align-bottom"></i> </b-button> -->
                     </td>
@@ -70,14 +75,16 @@
         </table>
         <Pagination class="ms-2 me-2" v-if="meta" @fetch="fetch" :lists="lists.length" :links="links" :pagination="meta" />
     </div>
+    <Update ref="update" :dropdowns="dropdowns"/>
     <Filter :regions="regions" :programs="programs" @status="filter" ref="filter"/>
 </template>
 <script>
 import Filter from './Modals/Filter.vue';
+import Update from './Modals/Update.vue';
 import Pagination from "@/Shared/Components/Pagination.vue";
 export default {
     props : ['regions', 'programs', 'dropdowns', 'statuses'],
-    components: { Pagination, Filter },
+    components: { Pagination, Filter, Update },
     data(){
         return {
             currentUrl: window.location.origin,
@@ -165,8 +172,8 @@ export default {
         show(){
             this.$refs.filter.show();
         },
-        update(data){
-            this.$refs.update.show(data);
+        update(data,type){
+            this.$refs.update.show(data,type);
         },
         authenticate(data){
             this.$refs.authentication.show(data);
@@ -179,6 +186,17 @@ export default {
             let index = this.lists.findIndex(u => u.id === data.id);
             this.lists[index] = data;
         },
+        refresh(){
+            this.arr = {},
+            this.status = null;
+            this.program = null;
+            this.subprogram = null;
+            this.category = null;
+            this.year = null;
+            this.keyword = '';
+            this.fetch();
+
+        }
     }
 }
 </script>

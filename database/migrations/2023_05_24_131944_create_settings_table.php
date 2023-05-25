@@ -16,7 +16,9 @@ return new class extends Migration
         Schema::create('settings', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->tinyIncrements('id');
-            $table->string('api_key',250); 
+            $table->string('api_key',250)->nullable(); 
+            $table->tinyInteger('agency_id')->nullable()->unsigned();
+            $table->foreign('agency_id')->references('id')->on('list_agencies')->onDelete('cascade');
             $table->timestamps();
         });
     }

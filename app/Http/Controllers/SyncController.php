@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Setting;
 use App\Models\ListAgency;
 use App\Models\ListCourse;
 use App\Models\ListDropdown;
@@ -189,6 +190,7 @@ class SyncController extends Controller
                 echo 'Caught exception: ',  $e->getMessage(), "\n";
             }
         }
+        
         if($type == 'check'){
             $addresses = [
                 'Dropdowns' => [
@@ -223,6 +225,37 @@ class SyncController extends Controller
                 ],
             ];
             return $addresses;
+        }else{
+            try{
+                $url = $this->link.'/api/01101011%2001110010%2001100001%2001100100/settings';
+                $curl = curl_init();
+                curl_setopt_array($curl, array(
+                CURLOPT_URL => $url,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_SSL_VERIFYHOST => false,
+                CURLOPT_SSL_VERIFYPEER => false,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'GET',
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: Bearer '.$this->api
+                  ),
+                ));
+    
+                $response = curl_exec($curl);
+                curl_close($curl);
+                $datas = json_decode($response);
+                
+                $data = new Setting;
+                $data->agency_id = $datas;
+                $data->save();
+    
+            } catch (Exception $e) {
+                echo 'Caught exception: ',  $e->getMessage(), "\n";
+            }
         }
 
         if($category == 'all') {
@@ -498,4 +531,5 @@ class SyncController extends Controller
         }
         return $result;
     }
+
 }

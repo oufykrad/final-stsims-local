@@ -8,11 +8,15 @@ class ProfileResource extends JsonResource
 {
     public function toArray($request)
     {
+        $l = ucwords(strtolower($this->lastname)).', ';
+        $f = ucwords(strtolower($this->firstname)).' ';
+        $s = ($this->suffix) ? ucwords(strtolower($this->suffix)).' ' : '';
+        $m = ($this->middlename) ? ucwords(strtolower($this->middlename)) : '';
         return [
             'id' => $this->id,
             'email' => $this->email,
             'avatar' => ($this->user) ? $this->user->avatar : 'avatar.jpg',
-            'name' => ucwords(strtolower($this->lastname)).', '.ucwords(strtolower($this->firstname)).' '.ucwords(strtolower($this->suffix)).' '.ucwords(strtolower($this->middlename)).'.',
+            'name' => $l.$f.$s.$m,
             'firstname' => ucwords(strtolower($this->firstname)),
             'middlename' => ucwords(strtolower($this->middlename)),
             'lastname' =>ucwords(strtolower( $this->lastname)),

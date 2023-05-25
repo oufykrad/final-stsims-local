@@ -16,6 +16,9 @@ class IndexController extends Controller
             case 'lists':
                 return $this->lists($request);
             break;
+            case 'counts':
+                return $this->counts($request);
+            break;
             default : 
             return inertia('Modules/Scholars/Index');
         }
@@ -31,7 +34,7 @@ class IndexController extends Controller
             Scholar::
             with('addresses.region','addresses.province','addresses.municipality','addresses.barangay')
             ->with('profile')
-            ->with('program','subprogram','category','status')
+            ->with('program:id,name','subprogram:id,name','category:id,name','status:id,name,color,others')
             ->with('education.school.school','education.course')
             ->whereHas('profile',function ($query) use ($keyword) {
                 $query->when($keyword, function ($query, $keyword) {
@@ -65,5 +68,17 @@ class IndexController extends Controller
             ->withQueryString()
         );
         return $data;
+    }
+
+    public function counts($request){
+        $array = [
+            Scholar::whereHas('status',function ($query) {
+                $query->where('type','ongoing');
+            })->count(),
+           Scholar::whereHas('status',function ($query) {
+                $query->where('name','Graduated');
+            })->count(),Scholar::count()
+        ];
+        return $array;
     }
 }

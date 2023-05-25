@@ -140,6 +140,15 @@ export default {
     },
 
     methods : {
+        settings() {
+            this.isLoading = true;
+            axios.get(this.currentUrl + '/sync/settings')
+            .then(response => {
+                this.isLoading = false;
+            })
+            .catch(err => console.log(err));
+        },
+
 
         fetchLocations() {
             this.isLoading = true;
