@@ -2957,6 +2957,7 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
     return {
       currentUrl: window.location.origin,
       years: [],
+      year: new Date().getFullYear(),
       provinces: [],
       province: null,
       is_undergrad: null,
@@ -3014,7 +3015,8 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
         params: {
           type: 'years',
           province: this.province,
-          is_undergrad: this.is_undergrad
+          is_undergrad: this.is_undergrad,
+          year: this.year
         }
       }).then(function (response) {
         _this.provinces = response.data.provinces;
@@ -3038,6 +3040,10 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
       })["catch"](function (err) {
         return console.log(err);
       });
+    },
+    previous: function previous(year) {
+      this.year = year - 20;
+      this.fetch();
     }
   }
 });
@@ -15978,22 +15984,29 @@ __webpack_require__.r(__webpack_exports__);
 var _hoisted_1 = {
   "class": "card"
 };
-var _hoisted_2 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+var _hoisted_2 = {
   "class": "card-header align-items-center d-flex"
-}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h4", {
+};
+var _hoisted_3 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h4", {
   "class": "card-title mb-0 flex-grow-1"
-}, "Scholarship Program Awarded Through the Years"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
-  "class": "btn btn-soft-primary btn-sm",
-  type: "button"
-}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+}, "Scholarship Program Awarded Through the Years", -1 /* HOISTED */);
+var _hoisted_4 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
   "class": "btn-content"
-}, " View all ")])])], -1 /* HOISTED */);
-var _hoisted_3 = {
+}, " Previous ", -1 /* HOISTED */);
+var _hoisted_5 = [_hoisted_4];
+var _hoisted_6 = {
   "class": "card-body"
 };
 function render(_ctx, _cache, $props, $setup, $data, $options) {
+  var _this = this;
   var _component_apexchart = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("apexchart");
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [_hoisted_2, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_apexchart, {
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [_hoisted_3, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+    onClick: _cache[0] || (_cache[0] = function ($event) {
+      return $options.previous(_this.year);
+    }),
+    "class": "btn btn-soft-primary btn-sm",
+    type: "button"
+  }, _hoisted_5)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_apexchart, {
     ref: "realtimeChart",
     "class": "apex-charts mb-n5 mt-2",
     type: "bar",

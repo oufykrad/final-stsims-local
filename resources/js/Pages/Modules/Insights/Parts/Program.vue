@@ -3,8 +3,8 @@
         <div class="card-header align-items-center d-flex">
             <h4 class="card-title mb-0 flex-grow-1">Scholarship Program Awarded Through the Years</h4>
             <div>
-                <button class="btn btn-soft-primary btn-sm" type="button">
-                    <div class="btn-content"> View all </div>
+                <button @click="previous(this.year)" class="btn btn-soft-primary btn-sm" type="button">
+                    <div class="btn-content"> Previous </div>
                 </button>
             </div>
         </div>
@@ -22,6 +22,7 @@ export default {
         return {
             currentUrl: window.location.origin,
             years: [],
+            year: new Date().getFullYear(),
             provinces: [],
             province: null,
             is_undergrad: null,
@@ -93,7 +94,8 @@ export default {
                 params : {
                     type : 'years',
                     province : this.province,
-                    is_undergrad : this.is_undergrad
+                    is_undergrad : this.is_undergrad,
+                    year: this.year
                 }
             })
             .then(response => {
@@ -120,6 +122,10 @@ export default {
                 this.series = response.data.lists;
             })
             .catch(err => console.log(err));
+        },
+        previous(year){
+            this.year = year - 20;
+            this.fetch();
         }
     }
 }
