@@ -1,10 +1,13 @@
 <template>
-    <div class="card">
+    <div class="card" style="height: 450px;">
         <div class="card-header align-items-center d-flex">
             <h4 class="card-title mb-0 flex-grow-1">Scholarship Program Awarded Through the Years</h4>
             <div>
-                <button @click="previous(this.year)" class="btn btn-soft-primary btn-sm" type="button">
+                <button @click="previous(this.year)" class="btn btn-soft-primary btn-sm me-1" type="button">
                     <div class="btn-content"> Previous </div>
+                </button>
+                 <button @click="next(this.year)" class="btn btn-soft-primary btn-sm" type="button" :disabled="this.year == new Date().getFullYear() ">
+                    <div class="btn-content"> Next </div>
                 </button>
             </div>
         </div>
@@ -125,6 +128,10 @@ export default {
         },
         previous(year){
             this.year = year - 20;
+            this.fetch();
+        },
+        next(year){
+            this.year = year + 20;
             this.fetch();
         }
     }

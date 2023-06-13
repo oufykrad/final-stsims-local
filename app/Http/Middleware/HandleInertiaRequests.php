@@ -5,7 +5,7 @@ namespace App\Http\Middleware;
 // use App\Models\College;
 // use App\Models\Course;
 use App\Models\ListPrivilege;
-// use App\Models\ListExpense;
+use App\Models\Setting;
 use App\Models\ListProgram;
 use App\Models\ListDropdown;
 use App\Models\ListAgency;
@@ -26,6 +26,10 @@ class HandleInertiaRequests extends Middleware
 
     public function share(Request $request): array
     {
+        $agency_id = Setting::first()->pluck('agency_id');
+        $agency = ListAgency::with('region')->where('id',$agency_id[0])->first();
+        $region_code = $agency->region_code;
+
         return array_merge(parent::share($request), [
             'auth' => (\Auth::check()) ? new UserResource(\Auth::user()) : '',
             'role' => (\Auth::check()) ? \Auth::user()->role : '',
@@ -43,6 +47,7 @@ class HandleInertiaRequests extends Middleware
             // 'colleges' => College::all(),
             // 'courses' => Course::all(),
             // 'dropdowns' => Dropdown::all(),
+            'region_code' => $region_code,
             'agencies' => ListAgency::all()
         ]);
     }

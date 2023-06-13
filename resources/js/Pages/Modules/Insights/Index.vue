@@ -40,9 +40,15 @@
                     <!-- <Location :locations="locations" :total="total"/> -->
                 </b-col>
                 <b-col xl="12">
-                    <Program />
+                    
                 </b-col>
             </b-row>
+        </b-col>
+        <b-col xxl="4">
+            <Location :locations="locations" :total="total" :region_code="region_code"/>
+        </b-col>
+         <b-col xxl="8">
+            <Program/>
         </b-col>
         <b-col xxl="4">
             <School :schools="schools" :total="total" :ongoing="ongoing" :graduated="graduated"/>
@@ -63,6 +69,7 @@ import Course from './Parts/C.vue';
 import Gender from './Parts/Gender.vue';
 import PageHeader from "@/Shared/Components/PageHeader.vue";
 export default {
+    props: ['region_code'],
     components : { PageHeader, Location, Program, School, Course, Gender },
     data(){
         return {
@@ -122,7 +129,8 @@ export default {
         fetch() {
             axios.get(this.currentUrl + '/insights', {
                 params: {
-                    type: 'lists'
+                    type: 'lists',
+                    region_code: this.region_code
                 }
             })
             .then(response => {

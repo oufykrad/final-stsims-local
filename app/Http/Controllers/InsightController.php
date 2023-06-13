@@ -21,7 +21,7 @@ class InsightController extends Controller
 
         switch($type){
             case 'lists':
-                return $this->home();
+                return $this->home($request);
             break;
             case 'years':
                 return $this->years($request);
@@ -31,10 +31,10 @@ class InsightController extends Controller
         }
     }
 
-    public function home(){
-        $agency_id = Setting::first()->pluck('agency_id');
-        $agency = ListAgency::with('region')->where('id',$agency_id[0])->first();
-        $region_code = $agency->region_code;
+    public function home($request){
+        // $agency_id = Setting::first()->pluck('agency_id');
+        // $agency = ListAgency::with('region')->where('id',$agency_id[0])->first();
+        // $region_code = $agency->region_code;
 
         $array = [
             'first' => $this->first(),
@@ -48,7 +48,7 @@ class InsightController extends Controller
             'graduated' => Scholar::whereHas('status',function ($query) {
                 $query->where('name','Graduated');
             })->count(),
-            'locations' => $this->location()
+            'locations' => $this->location($request)
         ];
 
         return $array;
@@ -210,8 +210,9 @@ class InsightController extends Controller
         return $data;
     }
 
-    public function location(){
-        $provinces = ScholarAddress::groupBy('province_code')->pluck('province_code');
+    public function location($request){
+        $region_code = $request->region_code;
+        $provinces = ScholarAddress::where('region_code',$region_code)->groupBy('province_code')->pluck('province_code');
         $provinces = LocationProvince::withCount('scholars')->whereIn('code',$provinces)->orderBy('scholars_count','DESC')->get();
         $programs = ListProgram::where('is_sub',1)->get();
 
@@ -241,7 +242,7 @@ class InsightController extends Controller
             $total[] = array_sum($sums[$key2]); 
         }
 
-        $array[] = [
+        $total2 = [
             'province' => 'Total',
             'count' => $total,
             'total' => array_sum($total)
@@ -249,7 +250,7 @@ class InsightController extends Controller
         
         $all = [
             'provinces' => $array,
-            'totals' => $total,
+            'totals' => $total2,
             'programs' => $programs
         ];
 
@@ -259,7 +260,7 @@ class InsightController extends Controller
     public function years(Request $request){
         $provinces = ScholarAddress::where('is_permanent',1)->groupBy('province_code')->pluck('province_code');
         $programs = ListProgram::where('is_sub',1)->get();
-        $current_year =  $request->year; $years = [];
+        $current_year = $request->year; $years = []; 
         $province = ($request->province) ? $request->province : null;
         $is_undergrad = ($request->is_undergrad != null) ? $request->is_undergrad : null;
         $pro = ($request->program) ? $request->program : null;
