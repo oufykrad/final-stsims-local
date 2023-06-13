@@ -13,7 +13,7 @@ class StaffResource extends JsonResource
      * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
      */
     public function toArray($request)
-    {
+    {   $this->profile->profileable->type = $this->profile->profileable_type;
         return [
             'id' => $this->id,
             'username' => $this->username,
@@ -29,7 +29,7 @@ class StaffResource extends JsonResource
             'middlename' => $this->profile->middlename,
             'gender' => $this->profile->gender,
             'mobile' => $this->profile->mobile,
-            'agency' => $this->profile->agency,
+            'profileable' => new ProfileableResource($this->profile->profileable),
             'g' =>($this->profile->gender == 'M') ? 'info' : 'warning',
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at

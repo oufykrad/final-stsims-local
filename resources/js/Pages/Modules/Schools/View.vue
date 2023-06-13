@@ -61,8 +61,8 @@
                                 </b-link>
                             </li>
                             <li class="nav-item">
-                                <b-link class="nav-link fw-semibold" data-bs-toggle="tab" href="#scholars" role="tab">
-                                    Scholars
+                                <b-link class="nav-link fw-semibold" data-bs-toggle="tab" href="#grading" role="tab">
+                                    Grading
                                 </b-link>
                             </li>
                         </ul>
@@ -83,19 +83,20 @@
                  <div class="tab-pane fade" id="courses" role="tabpanel">
                     <Course :id="school.data.id" :term="school.data.term"/>
                 </div>
-                 <div class="tab-pane fade" id="scholars" role="tabpanel">
-                   
+                <div class="tab-pane fade" id="grading" role="tabpanel">
+                    <Grading :id="school.data.id"/>
                 </div>
             </div>
        </b-col>
     </b-row>
 </template>
 <script>
+import Grading from './Pages/Grading.vue';
 import Semester from './Pages/Semester.vue';
 import Overview from './Pages/Overview.vue';
 import Course from './Pages/Course.vue';
 export default {
-    components: { Overview, Semester, Course },
+    components: { Overview, Semester, Course, Grading },
     props: ['school','dropdowns'],
     data() {
         return {

@@ -32,7 +32,7 @@ class ScholarBenefit extends Model
 
     public function status()
     {
-        return $this->belongsTo('App\Models\ListDropdown', 'status_id', 'id');
+        return $this->belongsTo('App\Models\ListStatus', 'status_id', 'id');
     }
 
     public function getMonthAttribute($value)

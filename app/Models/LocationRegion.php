@@ -17,4 +17,9 @@ class LocationRegion extends Model
     {
         return $this->hasMany('App\Models\LocationProvince', 'region_code');
     } 
+
+    public function profile()
+    {
+        return $this->morphOne('App\Models\UserProfile', 'profileable');
+    }
 }

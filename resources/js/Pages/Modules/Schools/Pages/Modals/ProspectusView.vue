@@ -1,5 +1,9 @@
 <template>
     <b-modal v-if="course" v-model="showModal" hide-footer :title="course.course.name" class="v-modal-custom" modal-class="zoomIn" fullscreen>
+        <template v-slot:header>
+            <h5 class="modal-title">{{course.course.name}}</h5>
+            <button @click="hide()" type="button" class="btn-close" aria-label="Close"></button>
+        </template>
         <b-form class="customform">
             <div class="row">
                 <b-tabs v-model="tabIndex">
@@ -81,7 +85,6 @@
                                                     <button @click="showModal = false" class="btn btn-danger btn-md" type="button">
                                                         <div class="btn-content"> Close </div>
                                                     </button>
-                                                    {{ message }}
                                                 </td>
                                                 <td>
                                                     <span class="float-end font-size-11 fw-bold me-5">Total Units: {{ totalUnits(s.courses) }}</span>
@@ -177,6 +180,9 @@ export default {
             }
             return sum
         },
+        hide(){
+            this.showModal = false;
+        }
     }
 }
 </script>

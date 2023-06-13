@@ -1,6 +1,9 @@
 <template>
-    <b-modal v-model="showModal" hide-footer title="Sync Scholar" header-class="p-3 bg-light" style="--vz-modal-width: 600px;" class="v-modal-custom" modal-class="zoomIn" centered no-close-on-backdrop>
-        
+    <b-modal v-model="showModal" hide-footer header-class="p-3 bg-light" style="--vz-modal-width: 600px;" class="v-modal-custom" modal-class="zoomIn" centered no-close-on-backdrop>
+        <template v-slot:header>
+            <h5 class="modal-title">Download Scholar</h5>
+            <button @click="hide()" type="button" class="btn-close" aria-label="Close"></button>
+        </template>
         <b-form action="#" id="editform" class="tablelist-form" autocomplete="off">
             <div class="row justify-content-center">
                 <div class="col-md-10">
@@ -14,7 +17,7 @@
                             </div>
                             <div class="p-2 mt-4">
                                 <form @submit.prevent="preview" enctype="multipart/form-data">
-                                    <p class="text-muted">Sync all scholars from the central server. This is to avoid typographical error when populating the system.</p>
+                                    <p class="text-muted">Download all scholars from the central server. This is to avoid typographical error when populating the system.</p>
                                     
                                     
                                     <span v-if="isLoading"><i class='bx bx-loader-circle bx-spin mt-2'></i><span class="text-muted ms-1 mt-n4">Loading ... </span></span>
@@ -40,8 +43,8 @@
                                         </div>
                                     </div>
                 
-                                    <div class="mt-4">
-                                        <button @click="sync" type="button"  class="btn btn-primary w-lg">Sync</button>
+                                    <div class="mt-4" v-if="!isLoading">
+                                        <button @click="sync" type="button"  class="btn btn-primary w-lg">Download</button>
                                     </div>
                                 </form>
                             </div>
@@ -86,8 +89,16 @@ export default {
                 this.success = response.data.success;
                 this.failed = response.data.failed;
                 this.duplicate = response.data.duplicate;
+                this.$emit('info',true);
             })
             .catch(err => console.log(err));
+        },
+        hide(){
+            this.success = [];
+            this.failed = [];
+            this.duplicate = [];
+            this.result = false;
+            this.showModal = false;
         }
     }
 }

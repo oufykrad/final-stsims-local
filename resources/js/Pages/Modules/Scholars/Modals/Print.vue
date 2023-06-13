@@ -5,6 +5,7 @@
                 <div role="alert" aria-live="polite" aria-atomic="true" class="alert alert-warning">You can filter by using the dropdown. Can be Empty</div>
                 <div class="row g-3">
                     <div class="col-md-12" v-if="type == 'scholars'">
+                       
                         <multiselect 
                             v-model="status" 
                             id="ajax" 
@@ -67,7 +68,7 @@ import 'vue-datepicker-next/index.css';
 import Multiselect from '@suadelabs/vue3-multiselect';
 export default {
     components: {DatePicker, Multiselect},
-    props: ['programs','dropdowns'],
+    props: ['programs','statuses'],
     data(){
         return {
             currentUrl: window.location.origin,
@@ -81,11 +82,11 @@ export default {
             showModal: false
         }
     },
-    computed:{
-        statuses : function() {
-            return this.dropdowns.filter(x => x.classification === 'Status');
-        }
-    },
+    // computed:{
+    //     statuses : function() {
+    //         return this.dropdowns.filter(x => x.classification === 'Status');
+    //     }
+    // },
     methods: {
         set(type){
             this.showModal = true;
@@ -109,7 +110,7 @@ export default {
                 'type' : this.type
             };
             info = JSON.stringify(info);
-            window.open(this.currentUrl + '/scholar/generate/'+info);
+            window.open(this.currentUrl + '/scholars?type=generate&info='+info);
         },
         hide(){
             this.showModal = false;
@@ -117,8 +118,3 @@ export default {
     }
 }
 </script>
-<style>
-.wew {
-    height: 100px;
-}
-</style>

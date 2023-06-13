@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Hashids\Hashids;
+use App\Models\Setting;
 use App\Models\SchoolCampus;
 use App\Models\SchoolSemester;
 use App\Models\SchoolCourseProspectus;
@@ -18,37 +19,54 @@ class SchoolController extends Controller
     use SchoolTrait; 
 
     public function index(Request $request){
-        if($request->lists){
-            $data = IndexResource::collection(
-                SchoolCampus::query()
-                ->with('school.class','term:id,name','grading:id,name')
-                ->with('region:region,code','province:name,code','municipality:name,code')
-                ->when($request->region, function ($query, $region) {
-                    $query->where('region_code',$region);
-                })
-                ->when($request->province, function ($query, $province) {
-                    $query->where('province_code',$province);
-                })
-                ->when($request->municipality, function ($query, $municipality) {
-                    $query->where('municipality_code',$municipality);
-                })
-                ->when($request->keyword, function ($query, $keyword) {
-                    $query->whereHas('school',function ($query) use ($keyword) {
-                        $query->where('name', 'LIKE', '%'.$keyword.'%');
-                    })->orWhere(function ($query) use ($keyword) {
-                        $query->where('campus', 'LIKE', '%'.$keyword.'%');
-                    });
-                })
-                ->whereHas('school',function ($query) {
-                    $query->orderBy('name','ASC');
-                })
-                ->paginate($request->counts)
-                ->withQueryString()
-            );
-            return $data;
-        }else{
+        
+        $type = $request->type;
+        switch($type){
+            case 'lists':
+                return $this->lists($request);
+            break;
+            case 'counts':
+                return [
+                    'statistics' => $this->statistics($request),
+                    'active' => $this->active($request)
+                ];
+            break;
+            case 'generate':
+                return $this->generate($request);
+            break;
+            default : 
             return inertia('Modules/Schools/Index');
         }
+    }
+
+    public function lists($request){
+        $data = IndexResource::collection(
+            SchoolCampus::query()
+            ->with('school.class','term:id,name','grading:id,name')
+            ->with('region:region,code','province:name,code','municipality:name,code')
+            ->when($request->region, function ($query, $region) {
+                $query->where('region_code',$region);
+            })
+            ->when($request->province, function ($query, $province) {
+                $query->where('province_code',$province);
+            })
+            ->when($request->municipality, function ($query, $municipality) {
+                $query->where('municipality_code',$municipality);
+            })
+            ->when($request->keyword, function ($query, $keyword) {
+                $query->whereHas('school',function ($query) use ($keyword) {
+                    $query->where('name', 'LIKE', '%'.$keyword.'%');
+                })->orWhere(function ($query) use ($keyword) {
+                    $query->where('campus', 'LIKE', '%'.$keyword.'%');
+                });
+            })
+            ->whereHas('school',function ($query) {
+                $query->orderBy('name','ASC');
+            })
+            ->paginate($request->counts)
+            ->withQueryString()
+        );
+        return $data;
     }
 
     public function show($id)
@@ -140,14 +158,26 @@ class SchoolController extends Controller
     }
 
     public function update(Request $request){
-        $data = SchoolCourseProspectus::where('id',$request->id)->first();
-        $data->update($request->except('editable'));
-        $message = 'Prospectus successfully updated. Thanks';
-        
-        return back()->with([
-            'data' => $data,
-            'message' => $message,
-            'type' => 'bxs-check-circle'
-        ]);
+        if($request->type == 'grading'){
+            $data = SchoolGrading::where('school_id',$request->id)->first();
+            $data->update($request->except('editable'));
+            $message = 'Prospectus successfully updated. Thanks';
+            
+            return back()->with([
+                'data' => $data,
+                'message' => $message,
+                'type' => 'bxs-check-circle'
+            ]);
+        }else{
+            $data = SchoolCourseProspectus::where('id',$request->id)->first();
+            $data->update($request->except('editable'));
+            $message = 'Prospectus successfully updated. Thanks';
+            
+            return back()->with([
+                'data' => $data,
+                'message' => $message,
+                'type' => 'bxs-check-circle'
+            ]);
+        }
     }
 }

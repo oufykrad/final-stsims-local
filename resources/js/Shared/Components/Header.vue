@@ -555,11 +555,10 @@
                                 <span class="align-middle">Profile</span>
                             </Link>
                             <div class="dropdown-divider"></div>
-                            <Link class="dropdown-item" to="/pages/profile-setting">
-                                <i
-                                    class="mdi mdi-cog-outline text-muted fs-16 align-middle me-1"></i>
+                            <a @click="setting()" class="dropdown-item">
+                                <i class="mdi mdi-cog-outline text-muted fs-16 align-middle me-1"></i>
                                 <span class="align-middle">Settings</span>
-                            </Link>
+                            </a>
                             <Link class="dropdown-item" method="post" as="button" href="/logout"><i
                                     class="mdi mdi-logout text-muted fs-16 align-middle me-1"></i>
                                 <span class="align-middle" data-key="t-logout">Logout</span>
@@ -572,8 +571,10 @@
         </div>
     </div>
 </header>
+<Setting2 ref="setting"/>
 </template>
 <script>
+import Setting2 from '../../Pages/Auth/ChangePassowrd.vue';
 import { SimpleBar } from "simplebar-vue3";
 import Cart from './Header/Cart.vue';
 import Lists from './Header/Lists.vue';
@@ -581,7 +582,7 @@ import Setting from './Header/Setting.vue';
 import Notification from './Header/Notification.vue';
 import Dropdown from './Header/Dropdown.vue';
 export default {
-    components : { SimpleBar, Cart, Lists, Setting, Notification, Dropdown },
+    components : { SimpleBar, Cart, Lists, Setting, Notification, Dropdown, Setting2 },
     data(){
         return {
              currentUrl: window.location.origin,
@@ -767,6 +768,9 @@ export default {
           });
         });
       }
+    },
+    setting(){
+        this.$refs.setting.show();
     }
   },
   computed: {},

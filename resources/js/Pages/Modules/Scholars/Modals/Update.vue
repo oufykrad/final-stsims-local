@@ -1,5 +1,5 @@
 <template>
-    <b-modal v-model="showModal" title="Update Incomplete Information"  style="--vz-modal-width: 600px;" header-class="p-3 bg-light" class="v-modal-custom" modal-class="zoomIn" centered no-close-on-backdrop>    
+    <b-modal v-model="showModal" title="Update Incomplete Information"  style="--vz-modal-width: 600px;" header-class="p-3 bg-light" class="v-modal-custom" modal-class="zoomIn" centered>    
         <ul class="list-unstyled mb-0 vstack gap-3" v-if="user">
             <li>
                 <div class="d-flex align-items-center">
@@ -12,9 +12,9 @@
                     </div>
                 </div>
             </li>
-            <li><i class="mdi mdi-seal-variant me-2 align-middle text-primary fs-16"></i><span class="fs-12">{{user.program}}</span></li>
+            <!-- <li><i class="mdi mdi-seal-variant me-2 align-middle text-primary fs-16"></i><span class="fs-12">{{user.program}}</span></li>
             <li class="mt-n3"><i class="ri-building-line me-2 align-middle text-primary fs-16"></i><span class="fs-12">{{user.education.school.name}}</span></li>
-            <li class="mt-n3"><i class="mdi mdi-school-outline me-2 align-middle text-primary fs-16"></i><span class="fs-12">{{user.education.course.name}}</span></li>   
+            <li class="mt-n3"><i class="mdi mdi-school-outline me-2 align-middle text-primary fs-16"></i><span class="fs-12">{{user.education.course.name}}</span></li>    -->
             <hr class="text-muted mt-0" />
         </ul>
 
@@ -24,17 +24,28 @@
             {{user.addresses[0].info.municipality}}
             {{user.addresses[0].info.province}}</code>
         </p> -->
-        <div v-if="user.addresses.length > 0" class="alert alert-info alert-dismissible alert-label-icon rounded-label" role="alert">
+        <div v-if="user.addresses.length > 0 && type == 'address'" class="alert alert-info alert-dismissible alert-label-icon rounded-label" role="alert">
             <i class="ri-map-2-line label-icon"></i>
-            {{user.addresses[0].info.address}}
-            {{user.addresses[0].info.barangay}}
-            {{user.addresses[0].info.municipality}}
+            {{(user.addresses[0].info.address) ? user.addresses[0].info.address+', ' : ''}}
+            {{(user.addresses[0].info.barangay) ? user.addresses[0].info.barangay+', ' : ''}}
+            {{user.addresses[0].info.municipality+', '}}
             {{user.addresses[0].info.province}}
         </div>
 
-        <!-- <b-form class="customform mb-2">
+        <div v-if="type == 'education'" class="alert alert-info alert-dismissible alert-label-icon rounded-label" role="alert">
+            <i class="ri-building-line label-icon"></i>
+            {{user.education.info.school}}
+        </div>
+
+        <b-form class="customform mb-2">
             <div class="row customerform">
-                <div class="col-md-12" v-if="!user.education.has_school">
+                <div class="col-md-12 mt-4">
+                    <div class="form-group"  v-if="type == 'account_no'">
+                        <label>Account No.: <span v-if="form.errors" v-text="form.errors.account_no" class="haveerror"></span></label>
+                        <input type="text" class="form-control" v-model="user.account_no" style="text-transform: capitalize;">
+                    </div>
+                </div>
+                <div class="col-md-12" v-if="!user.education.has_school && type == 'education'">
                     <label>School: <span v-if="errors.length > 0" class="haveerror">({{ errors[0].school_id }})</span></label>
                     <multiselect v-model="school" id="ajax" label="name" track-by="id"
                         placeholder="Search School" open-direction="bottom" :options="schools"
@@ -44,17 +55,7 @@
                         @search-change="asyncSchool">
                     </multiselect> 
                 </div>
-                <div class="col-md-12" v-if="!user.education.has_course">
-                    <label>Course: <span v-if="errors.length > 0" class="haveerror">({{ errors[0].course_id }})</span></label>
-                    <multiselect v-model="course" id="ajax" label="name" track-by="id"
-                        placeholder="Search Course" open-direction="bottom" :options="courses"
-                        :searchable="true" 
-                        :allow-empty="false"
-                        :show-labels="false"
-                        @search-change="asyncCourse">
-                    </multiselect> 
-                </div>
-                <div class="col-md-12" v-if="!user.education.has_level">
+                <div class="col-md-12" v-if="!user.education.has_level && user.status.type == 'Ongoing' && type == 'education'">
                     <label>Level: <span v-if="errors.length > 0" class="haveerror">({{ errors[0].level_id }})</span></label>
                     <multiselect 
                         v-model="level" 
@@ -68,13 +69,43 @@
                         :show-labels="false">
                     </multiselect> 
                 </div>
-                <div class="col-md-12 mt-2 mb-1" v-if="user.status.name == 'Graduated'">
+                <!-- <div class="col-md-12" v-if="!user.education.has_course">
+                    <label>Course: <span v-if="errors.length > 0" class="haveerror">({{ errors[0].course_id }})</span></label>
+                    <multiselect v-model="course" id="ajax" label="name" track-by="id"
+                        placeholder="Search Course" open-direction="bottom" :options="courses"
+                        :searchable="true" 
+                        :allow-empty="false"
+                        :show-labels="false"
+                        @search-change="asyncCourse">
+                    </multiselect> 
+                </div> -->
+                <!-- <div class="col-md-12" v-if="!user.education.has_level">
+                    <label>Level: <span v-if="errors.length > 0" class="haveerror">({{ errors[0].level_id }})</span></label>
+                    <multiselect 
+                        v-model="level" 
+                        id="ajax" 
+                        label="name" track-by="id"
+                        placeholder="Search Level" 
+                        open-direction="bottom" 
+                        :options="levels"
+                        :searchable="true" 
+                        :allow-empty="false"
+                        :show-labels="false">
+                    </multiselect> 
+                </div> -->
+                 <div class="col-md-12 mt-2">
+                    <div class="form-group"  v-if="type == 'education' && user.status.name == 'Graduated' && user.education.graduated_year == 'n/a'">
+                        <label>Graduated Year: <span v-if="form.errors" v-text="form.errors.graduated_year" class="haveerror"></span></label>
+                        <input class="form-control" v-model="graduated_year" v-maska data-maska="####" type="number">
+                    </div>
+                </div>
+                <div class="col-md-12 mt-2 mb-1" v-if="user.status.name == 'Graduated' && type == 'education'">
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" v-model="has_award" id="gridCheck"/>
                         <label class="form-check-label" for="gridCheck">Does the scholar has Academic award?</label>
                     </div>
                 </div>
-                <div class="col-md-12" v-if="user.status.name == 'Graduated' && has_award == true">
+                <div class="col-md-12" v-if="user.status.name == 'Graduated' && has_award == true && type == 'education'">
                     <label>Award: <span v-if="errors.length > 0" class="haveerror">({{ errors[0].award_id }})</span></label>
                     <multiselect 
                         v-model="award" 
@@ -87,9 +118,35 @@
                         :allow-empty="false"
                         :show-labels="false">
                     </multiselect> 
+                </div> 
+                <div class="col-md-12" v-if="user.addresses.length > 0 && type == 'address'">
+                    <div class="form-group" v-if="user.addresses[0].municipality == null">
+                        <label>Municipality: <span v-if="errors.municipality_code" v-text="errors.municipality_code" class="haveerror"></span></label>
+                            <multiselect 
+                            v-model="municipality" 
+                            :options="municipalities"
+                            :allow-empty="false"
+                            :show-labels="false"
+                            label="name" track-by="code"
+                            placeholder="Select Municipality">
+                        </multiselect>
+                    </div>
+                </div>
+                 <div class="col-md-12 mt-3" v-if="user.addresses.length > 0 && type == 'address'">
+                    <div class="form-group" v-if="user.addresses[0].barangay == null">
+                        <label>Barangay: <span v-if="errors.barangay_code" v-text="errors.barangay_code" class="haveerror"></span></label>
+                            <multiselect 
+                            v-model="barangay" 
+                            :options="barangays"
+                            :allow-empty="false"
+                            :show-labels="false"
+                            label="name" track-by="code"
+                            placeholder="Select Barangay">
+                        </multiselect>
+                    </div>
                 </div>
             </div>
-        </b-form> -->
+        </b-form>
         <template v-slot:footer>
             <b-button @click="hide()" variant="light" block>Cancel</b-button>
             <b-button @click="create('ok')" variant="primary" :disabled="form.processing" block>Save</b-button>
@@ -97,8 +154,10 @@
     </b-modal>
 </template>
 <script>
+import { vMaska } from "maska"
 import Multiselect from '@suadelabs/vue3-multiselect';
 export default {
+    directives: { maska: vMaska },
     components: { Multiselect },
     props: ['dropdowns'],
     data(){
@@ -111,7 +170,8 @@ export default {
                     school: {}, course: {}
                 },
                 addresses: [],
-                profile: {}
+                profile: {},
+                account_no: ''
             },
             form : {},
             profile_id : '',
@@ -119,10 +179,15 @@ export default {
             program_id: '',
             schools: [],
             courses: [],
+            municipalities: [],
+            barangays: [],
             level: '',
             school: '',
             course: '',
             award: '',
+            graduated_year: '',
+            municipality: '',
+            barangay: '',
             has_award: false,
             showModal: false,
             type: ''
@@ -141,6 +206,13 @@ export default {
             this.type = type;
             this.user = data;
             this.errors = [];
+            if(type == 'address'){
+                if(this.user.addresses[0].municipality == null){
+                    this.fetchMunicipality(this.user.addresses[0].province.code);
+                }else{
+                    this.fetchBarangay(this.user.addresses[0].municipality.code);
+                }
+            }
             this.showModal = true;
         },
         hide(){
@@ -150,14 +222,21 @@ export default {
             let data = new FormData();
 
             data.append('id', this.user.id);
+            data.append('editable', 'update');
+            data.append('type', this.type);
             data.append('is_completed', 1);
-            data.append('type', 'old');
-            data.append('editable', 'information');
-            
-            (!this.user.education.has_school) ? data.append('school_id',(this.school != '') ? this.school.id : '') : '';
-            (!this.user.education.has_course) ? data.append('course_id', (this.course != '') ? this.course.id : '') : '';
-            (!this.user.education.has_level) ? data.append('level_id', (this.level != '') ? this.level.id : '') : '';
-            (this.has_award) ? data.append('award_id', (this.award != '') ? this.award.id : '') : '';
+            if(this.type == 'education'){
+                data.append('education_id', this.user.education.id);
+                (this.type == 'education' && this.user.status.name == 'Graduated' && this.user.education.graduated_year == 'n/a') ? data.append('graduated_year',this.graduated_year) : '';
+                (!this.user.education.has_level && this.user.status.type == 'Ongoing') ? data.append('level_id', (this.level != '') ? this.level.id : '') : '';
+                (this.has_award) ? data.append('award_id', (this.award != '') ? this.award.id : '') : '';
+            }else if(this.type == 'address'){
+                data.append('address_id', this.user.addresses[0].id);
+                (this.user.addresses[0].municipality == null) ? data.append('municipality_code', (this.municipality != '') ? this.municipality.code : '') : '';
+                (this.user.addresses[0].barangay == null) ? data.append('barangay_code', (this.barangay != '') ? this.barangay.code : '') : '';
+            }else{
+                data.append('account_no', this.user.account_no);
+            }
 
             this.$inertia.post('/scholars',data,{
                 preserveScroll: true,
@@ -198,8 +277,25 @@ export default {
             this.school = '';
             this.course = '';
             this.award = '';
+            this.barangay = '';
+            this.municipality = '';
             this.showModal = false;
-        }
+        },
+        fetchMunicipality($id){
+            axios.get(this.currentUrl + '/lists/municipalities/'+$id)
+            .then(response => {
+                this.municipalities = response.data.data;
+            })
+            .catch(err => console.log(err));
+        },
+
+        fetchBarangay($id){
+            axios.get(this.currentUrl + '/lists/barangays/'+$id)
+            .then(response => {
+                this.barangays = response.data.data;
+            })
+            .catch(err => console.log(err));
+        },
     }
 }
 </script>

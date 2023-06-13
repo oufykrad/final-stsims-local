@@ -17,6 +17,11 @@ class ListAgency extends Model
         return $this->belongsTo('App\Models\LocationRegion', 'region_code', 'code');
     }
 
+    public function user(): MorphOne
+    {
+        return $this->morphOne(UserProfile::class, 'userable');
+    }
+
     public function getUpdatedAtAttribute($value)
     {
         return date('M d, Y g:i a', strtotime($value));

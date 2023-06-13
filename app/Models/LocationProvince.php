@@ -25,6 +25,11 @@ class LocationProvince extends Model
 
     public function scholars()
     {
-        return $this->hasMany('App\Models\ProfileAddress', 'province_code');
+        return $this->hasMany('App\Models\ScholarAddress', 'province_code');
     } 
+
+    public function profile()
+    {
+        return $this->morphOne('App\Models\UserProfile', 'profileable');
+    }
 }

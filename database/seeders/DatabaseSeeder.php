@@ -33,6 +33,8 @@ class DatabaseSeeder extends Seeder
             'gender' => 'Male',
             'user_id' => 1,
             'mobile' => '09171531652',
+            'profileable_type' => 'App\Models\LocationRegion',
+            'profileable_id' =>'090000000',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -51,5 +53,19 @@ class DatabaseSeeder extends Seeder
         // $this->call(ListStatusesTableSeeder::class);
         // $this->call(UsersTableSeeder::class);
         // $this->call(UserProfilesTableSeeder::class);
+        
+        // $this->call(ScholarsTableSeeder::class);
+        // $this->call(ScholarAddressesTableSeeder::class);
+        // $this->call(ScholarProfilesTableSeeder::class);
+        // $this->call(ScholarEducationTableSeeder::class);
+
+
+        // $this->call(SchoolCourseProspectusesTableSeeder::class);
+        // $this->call(SchoolSemestersTableSeeder::class);
+        // $this->call(EnrolleesTableSeeder::class);
+        // $this->call(ReleasesTableSeeder::class);
+        // $this->call(ScholarBenefitsTableSeeder::class);
+        // $this->call(ScholarEnrollmentsTableSeeder::class);
+        // $this->call(ScholarEnrollmentListsTableSeeder::class);
     }
 }

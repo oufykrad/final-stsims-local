@@ -90,102 +90,106 @@ border-top: none !important;
 
         $user = json_encode($user); 
         $user = json_decode($user, true); 
+
+        $digit = new NumberFormatter("en", NumberFormatter::SPELLOUT);
+        $number = $digit->format($benefits['total']);
     ?>
 
-    <div style="font-family:Calibri;">
-        <img src="{{ asset('images/lbp.png') }}" style="position: absolute; top: -10; left: 40; width: 80px; height: 80px;">
-        <center style="font-size: 14px; font-weight: bold;  margin-bottom: 3px;">DEPARTMENT OF SCIENCE AND TECHNOLOGY</center>
-        <center style="font-size: 12px; color: green; font-weight: bold; font-family: Courier New,Courier,Lucida Sans Typewriter,Lucida Typewriter,monospace;">PAYROLL REGISTER</center>
-        <center style="font-size: 11px; margin-top: 2px; color: gray; font-weight: bold; font-family: Courier New,Courier,Lucida Sans Typewriter,Lucida Typewriter,monospace;">LBP BRANCH : LBP KCC MALL DE ZAMBOANGA &nbsp;&nbsp;&nbsp; CODE : [ 999 ]</center>
-        <center style="font-size: 11px; margin-top: 2px; color: gray; font-weight: bold; font-family: Courier New,Courier,Lucida Sans Typewriter,Lucida Typewriter,monospace;">BATCH 00001</center>
+    <!-- <div style="font-family:Calibri;">
+        <span style="position: absolute; top: -10; left: 40; font-size: 11px;">{{date('d M Y',strtotime(now() . ' +1 day'))}}</span>
+        <span style="position: absolute; top: -10; right: 40; font-size: 11px;">Page no. 1</span>
+        <img src="{{ asset('images/lbp.png') }}" style="position: absolute; top: 0; left: 40; width: 60px; height: 60px;">
+        <center style="font-size: 15px; font-weight: bold;  margin-bottom: 3px;">DEPARTMENT OF SCIENCE AND TECHNOLOGY</center>
+        <center style="font-size: 14px; color: green; font-weight: bold; font-family: Courier New,Courier,Lucida Sans Typewriter,Lucida Typewriter,monospace;">PAYROLL REGISTER</center>
+        <center style="font-size: 12px; margin-top: 2px; color: gray; font-weight: bold; font-family: Courier New,Courier,Lucida Sans Typewriter,Lucida Typewriter,monospace;">LBP BRANCH : LBP KCC MALL DE ZBGA &nbsp;&nbsp;&nbsp; CODE : [ 999 ]</center>
+        <center style="font-size: 12px; margin-top: 2px; color: gray; font-weight: bold; font-family: Courier New,Courier,Lucida Sans Typewriter,Lucida Typewriter,monospace;">BATCH 00035</center>
     </div>
 
-    <table style="font-size: 10px; font-family:Arial, Helvetica, sans-serif; width: 100%; margin-top: 25px;  margin-left: auto; margin-right: auto;">
+    <table style="font-size: 11px; font-family:Arial, Helvetica, sans-serif; width: 100%; margin-top: 25px;  margin-left: auto; margin-right: auto;">
         <tr>
             <td style="width: 20%; text-align: center; font-style: bold; background-color: black; color: white; padding: 5px;">ACCOUNT NO.</td>
             <td style="width: 60%; text-align: center; font-style: bold; background-color: black; color: white; padding: 5px;">ACCOUNT NAME</td>
             <td style="width: 20%; text-align: center; font-style: bold; background-color: black; color: white; padding: 5px;">AMOUNT</td>
         </tr>
         @foreach($benefits['lists'] as $benefit)
-        <tr style="text-align: center; font-size: 11px; text-transform: uppercase; font-weight: bold;">
-            <td>{{$benefit['account_no']}}</td>
+        <tr style="font-size: 11px; text-transform: uppercase; font-weight: bold; ">
+            <td style="text-align: center;">{{$benefit['account_no']}}</td>
             <td>{{$benefit['name']}}</td>
-            <td>{{ number_format($benefit['total'],2)}}</td>
+            <td style="text-align: center;">{{ number_format($benefit['total'],2)}}</td>
         </tr>
         @endforeach
     </table>
     <center style="font-size: 11px; margin-top: 10px; color: gray; font-family: Courier New,Courier,Lucida Sans Typewriter,Lucida Typewriter,monospace;">********** END OF REGISTER **********</center>
     
-    <h5 style="font-size: 11px; margin-top: 30px; color: black; font-family: Courier New,Courier,Lucida Sans Typewriter,Lucida Typewriter,monospace;">TOTAL NO. OF RECORDS: <span style="color: green;">{{ count($benefits['lists'])}}</span></h5>
-    <h5 style="font-size: 11px; margin-top: -15px; color: black; font-family: Courier New,Courier,Lucida Sans Typewriter,Lucida Typewriter,monospace;">TOTAL AMOUNT: <span style="color: green;">{{ number_format($benefits['total'],2) }}</span></h5>
+    <h5 style="font-size: 13px; margin-top: 30px; color: black; font-family: Courier New,Courier,Lucida Sans Typewriter,Lucida Typewriter,monospace;">TOTAL NO. OF RECORDS: <span style="color: green;">{{ count($benefits['lists'])}}</span></h5>
+    <h5 style="font-size: 13px; margin-top: -15px; color: black; font-family: Courier New,Courier,Lucida Sans Typewriter,Lucida Typewriter,monospace;">TOTAL AMOUNT: <span style="color: green;">{{ number_format($benefits['total'],2) }}</span></h5>
     
-    <div style="margin-top: 40px; font-family:Arial, Helvetica, sans-serif;">
-        <div style="float: right; width: 240px; margin-right: 10px; text-align: center;">
-            <span class="nor" style="font-size: 12px;">MARTIN A. WEE</span>
+    <div style="margin-top: 60px; font-family:Arial, Helvetica, sans-serif;">
+        <div style="float: right; width: 240px;">
+            <p style="margin-top: -25px; margin-left: 0px; font-size: 10px; font-weight: bold;">Checked By:</p>
+            <span class="nor" style="font-size: 12px;"></span>
             <hr style="height:1px;border:none;color:#333;background-color:#333; margin-bottom: 1px; margin-top: 0px;" />
-            <p style="margin-top: -1px; margin-bottom: -5px; font-size: 9px; font-weight: bold;">Noted By:</p>
+            <p style="margin-top: 5px; margin-bottom: -5px; font-size: 9px;">Approver Name</p>
+            <p style="margin-top: 10px; margin-bottom: -5px; font-size: 9px;">Approver Position</p> 
         </div>
 
-        <div style="float: left; width: 240px; margin-left: 10px; text-align: center;">
-        <span class="nor" style="font-size: 12px;">{{ $user['profile']['firstname']}} {{ $user['profile']['middlename'][0]}}. {{ $user['profile']['lastname']}}</span>
-        <hr style="height:1px;border:none;color:#333;background-color:#333; margin-bottom: 1px; margin-top: 0px;" />
-        <p style="margin-top: -1px; margin-bottom: -5px; font-size: 9px; font-weight: bold;">Prepared By:</p>
-    </div>
+        <div style="float: left; width: 240px;">
+            <p style="margin-top: -25px; margin-left: 0px; font-size: 10px; font-weight: bold;">Prepared By:</p>
+            <span class="nor" style="font-size: 12px;"></span>
+            <hr style="height:1px;border:none;color:#333;background-color:#333; margin-bottom: 1px; margin-top: 0px;" />
+            <p style="margin-top: 5px; margin-bottom: -5px; font-size: 9px;">Verifier Name</p>
+            <p style="margin-top: 10px; margin-bottom: -5px; font-size: 9px;">Verifier Position</p>
+        </div>
 
-    <table style="font-size: 9px; font-family:Arial, Helvetica, sans-serif; width: 100%; border:none;  left: 0; bottom: 0; position:absolute; margin-left: auto; margin-right: auto;">
-        <tr>
-            <td style="width: 15%; text-align: center; font-style: bold; border-left: none; border-right: none; padding: 5px;">Rec: {{ count($benefits['lists'])}}</td>
-            <td style="width: 25%; text-align: center; font-style: bold; border-left: none; border-right: none; padding: 5px;">Total Amt: {{ number_format($benefits['total'],2) }}</td>
-            <td style="width: 30%; text-align: center; font-style: bold; border-left: none; border-right: none; padding: 5px;">Acct Hsh: {{ number_format('45636482000',2) }}</td>
-            <td style="width: 30%; text-align: center; font-style: bold; border-left: none; border-right: none; padding: 5px;">Hash Total: {{ number_format('45636482000',2) }}</td>
-        </tr>
-    </table>
+        <div style="float: left; width: 240px; margin-left: -240px; margin-top: 100px;">
+            <p style="margin-top: -25px; margin-left: 0px; font-size: 10px; font-weight: bold;">Noted By:</p>
+            <span class="nor" style="font-size: 12px;"></span>
+            <hr style="height:1px;border:none;color:#333;background-color:#333; margin-bottom: 1px; margin-top: 0px;" />
+            <p style="margin-top: 5px; margin-bottom: -5px; font-size: 9px;">Certifier Name</p>
+            <p style="margin-top: 10px; margin-bottom: -5px; font-size: 9px;">Certifier Position</p>
+        </div>
 
-    <div class="page-break"></div>
+        <table style="font-size: 10px; font-family:Arial, Helvetica, sans-serif; width: 100%; border:none;  left: 0; bottom: 0; position:absolute; margin-left: auto; margin-right: auto;">
+            <tr>
+                <td style="width: 15%; text-align: center; font-style: bold; border-left: none; border-right: none; padding: 5px;">Rec: {{ count($benefits['lists'])}}</td>
+                <td style="width: 25%; text-align: center; font-style: bold; border-left: none; border-right: none; padding: 5px;">Total Amt: {{ number_format($benefits['total'],2) }}</td>
+                <td style="width: 30%; text-align: center; font-style: bold; border-left: none; border-right: none; padding: 5px;">Acct Hsh: {{ number_format('159364820000',2) }}</td>
+                <td style="width: 30%; text-align: center; font-style: bold; border-left: none; border-right: none; padding: 5px;">Hash Total: {{ number_format('10236482000',2) }}</td>
+            </tr>
+        </table>
 
-    <!-- <div style="font-family:Calibri;">
-        <center style="font-size: 12px; color: green; font-weight: bold; font-family: Courier New,Courier,Lucida Sans Typewriter,Lucida Typewriter,monospace;">DOST-SEI SCHOLARSHIP PAYMENTS FOR CREDIT TO THE </center>
-        <center style="font-size: 11px; margin-top: 2px; color:green; font-weight: bold; font-family: Courier New,Courier,Lucida Sans Typewriter,Lucida Typewriter,monospace;">SA-LBP ACCOUNTS OF SCHOLARS RA 7678</center>
-        <center style="font-size: 11px; margin-top: 2px; color: gray; font-weight: bold; font-family: Courier New,Courier,Lucida Sans Typewriter,Lucida Typewriter,monospace;">{{ date('F d, Y') }}</center>
-    </div>
+    <div class="page-break"></div> -->
 
-    <table style="font-size: 9px; font-family:Arial, Helvetica, sans-serif; width: 100%; margin-top: 25px;  margin-left: auto; margin-right: auto;">
-        <tr>
-            <td style="width: 20%; text-align: center; font-style: bold; background-color: #e3e3e3; padding: 5px;">ACCOUNT NO.</td>
-            <td style="width: 60%; text-align: center; font-style: bold; background-color: #e3e3e3; padding: 5px;">ACCOUNT NAME</td>
-            <td style="width: 20%; text-align: center; font-style: bold; background-color: #e3e3e3; padding: 5px;">Total</td>
-        </tr>
-        @foreach($benefits['lists'] as $benefit)
-        <tr style="text-align: center; font-size: 11px; text-transform: uppercase; font-weight: bold;">
-            <td>{{$benefit['account_no']}}</td>
-            <td>{{$benefit['name']}}</td>
-            <td>{{ number_format($benefit['total'],2)}}</td>
-        </tr>
-        @endforeach
-    </table> -->
+    
     <div style="font-family:Calibri;">
-        <img src="{{ asset('images/dost.png') }}" style="position: absolute; top: -10; left: 40; width: 70px; height: 70px;">
-        <img src="{{ asset('images/sei.png') }}" style="position: absolute; top: -10; right: 40; width: 70px; height: 70px;">
-        <center style="font-size: 12px; font-family: Courier New,Courier,Lucida Sans Typewriter,Lucida Typewriter,monospace;">REPUBLIC OF THE PHILIPPINES</center>
-        <center style="font-size: 13px; font-weight: bold;">DEPARTMENT OF SCIENCE AND TECHNOLOGY</center>
-        <center style="font-size: 12px; font-family: Courier New,Courier,Lucida Sans Typewriter,Lucida Typewriter,monospace;">REGIONAL OFFICE IX</center>
+        <img src="{{ asset('images/dost.png') }}" style="position: absolute; top: -10; left: 40; width: 80px; height: 80px;">
+        <!-- <img src="{{ asset('images/sei.png') }}" style="position: absolute; top: -10; right: 40; width: 70px; height: 70px;"> -->
+        <div style="margin-left: 160px;">
+            <span style="font-size: 14px; font-family:Arial, Helvetica, sans-serif;">Republic of the Philippines</span><br />
+            <span style="font-size: 16px; font-family:Arial, Helvetica, sans-serif; font-weight: bold;">DEPARTMENT OF SCIENCE AND TECHNOLOGY</span><br />
+            <span style="font-size: 14px; font-family:Arial, Helvetica, sans-serif;">Regional Office IX</span>
+        </div>
+        <span style="font-family:Arial, Helvetica, sans-serif; position: absolute; top: 100; right: 140; font-size: 16px;">{{date('d M Y',strtotime(now() . ' +1 day'))}}</span>
 
-
-        <center style="font-size: 20px; letter-spacing: .5rem; margin-top: 60px; font-weight: bold;">CERTIFICATION</center>
-
-        <p style="font-family:Arial, Helvetica, sans-serif; margin-top:50px; font-size: 12px; text-indent: 50px;">This is to authorized <b>Land bank of the Philippines</b> (LBP) to debit the amount of <b>Php {{number_format($benefits['total'],2)}}</b> from the <b>DOST-SEI S&T Scholarship Fund</b> with <b>Account No. 1952-1000-64</b> to the attached Payroll Register Batch 00001.</p>
+        <center style="font-size: 24px; letter-spacing: .5rem; margin-top: 140px; font-family:Arial, Helvetica, sans-serif; font-weight: bold;">CERTIFICATION</center>
+        <p style="font-family:Arial, Helvetica, sans-serif; margin-top:50px; margin-left: 80px; margin-right: 80px; font-size: 15px; text-indent: 50px; text-align: justify; text-justify: inter-word;">This is to authorized <span style="font-family:Arial, Helvetica, sans-serif; font-weight:bold;">Land bank of the Philippines</span> (LBP) to debit the amount of <span style="font-family:Arial, Helvetica, sans-serif; font-weight:bold;">{{strtoupper($number)}} PESOS (Php {{number_format($benefits['total'],2)}})</span> from the <span style="font-family:Arial, Helvetica, sans-serif; font-weight:bold;">DOST-SEI S&T Scholarship Fund</span> with <span style="font-family:Arial, Helvetica, sans-serif; font-weight:bold;">Account No. 1952-1000-64</span> to the attached Payroll Register Batch 00052.</p>
 
         <div style="margin-top: 100px; font-family:Arial, Helvetica, sans-serif;">
-            <div style="float: right; width: 240px; margin-right: 10px; text-align: center;">
-                <span class="nor" style="font-size: 12px;">MARTIN A. WEE</span>
-                <hr style="height:1px;border:none;color:#333;background-color:#333; margin-bottom: 1px; margin-top: 0px;" />
-                <p style="margin-top: 0px; margin-bottom: -5px; font-size: 12px; font-weight: bold;">Regional Director</p>
+            <div style="float: right; width: 240px; margin-right: 80px;">
+                <span class="nor" style="font-size: 16px; font-family:Arial, Helvetica, sans-serif; font-weight: bold;">JALI J. BADIOLA</span>
+                <p style="margin-top: 0px; font-family:Arial, Helvetica, sans-serif; margin-bottom: -5px; font-size: 14px;">CASHIER III</p>
             </div>
 
+            <div style="margin-top: 130px; float: right; width: 240px; margin-right: -240px;">
+                <span class="nor" style="font-size: 16px; font-family:Arial, Helvetica, sans-serif; font-weight: bold;">MARTIN A. WEE</span>
+                <p style="margin-top: 0px; font-family:Arial, Helvetica, sans-serif; margin-bottom: -5px; font-size: 14px;">REGIONAL DIRECTOR</p>
+            </div>
+
+            <!-- <span style="font-family:Arial, Helvetica, sans-serif; position: absolute; top: 100; right: 140; font-size: 16px;">{{date('d M Y')}}</span>
             <div style="float: left; width: 240px; margin-left: 10px; text-align: center;">
-            <span class="nor" style="font-size: 12px;">{{ $user['profile']['firstname']}} {{ $user['profile']['middlename'][0]}}. {{ $user['profile']['lastname']}}</span>
+            <span class="nor" style="font-size: 13px; font-weight: bold;">JALI J. BADIOLA</span>
             <hr style="height:1px;border:none;color:#333;background-color:#333; margin-bottom: 1px; margin-top: 0px;" />
-            <p style="margin-top: 0px; margin-bottom: -5px; font-size: 12px; font-weight: bold;">Cashier</p>
+            <p style="margin-top: 0px; font-family:Arial, Helvetica, sans-serif; margin-bottom: -5px; font-size: 10px;">CASHIER III</p> -->
         </div>
     </div>
 </body>

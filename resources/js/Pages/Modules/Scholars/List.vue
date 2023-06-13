@@ -21,7 +21,7 @@
                     <i class="bx bx-refresh search-icon"></i>
                 </span>
                 <b-button type="button" variant="primary" @click="show()">
-                    <i class="ri-filter-3-line align-bottom me-1"></i> Fliters
+                    <i class="ri-filter-fill align-bottom me-1"></i> Filter
                 </b-button>
             </div>
         </b-col>
@@ -51,7 +51,7 @@
                     </td>
                     <td>
                         <h5 class="fs-13 mb-0 text-dark">{{user.profile.name}}</h5>
-                        <p class="fs-12 text-muted mb-0">{{user.spas_id}}</p>
+                        <p class="fs-12 text-muted mb-0">{{user.spas_id}} / {{user.account_no}}</p>
                     </td>
                     <td class="text-center">
                         <p class="fs-12 mb-n1 text-dark">{{(user.education.school instanceof Object) ? user.education.school.name : user.education.school}}</p>
@@ -64,7 +64,7 @@
                     </td>
                     <td class="text-end">
                         <b-button v-if="user.user == null" @click="authenticate(user)" variant="soft-primary" v-b-tooltip.hover title="Create Scholar Account" size="sm" class="edit-list me-1"><i class="ri-user-add-fill align-bottom"></i> </b-button>
-                        <b-button v-if="user.is_completed == 0" @click="update(user,'account_no')" variant="soft-danger" v-b-tooltip.hover title="Update Account No." size="sm" class="remove-list me-1"><i class="ri-bank-card-2-fill align-bottom"></i></b-button>
+                        <b-button v-if="user.account_no == null && user.status.type == 'Ongoing'" @click="update(user,'account_no')" variant="soft-danger" v-b-tooltip.hover title="Update Account No." size="sm" class="remove-list me-1"><i class="ri-bank-card-2-fill align-bottom"></i></b-button>
                         <b-button v-if="user.education.is_completed == 0" @click="update(user,'education')" variant="soft-danger" v-b-tooltip.hover title="Update Education" size="sm" class="remove-list me-1"><i class="ri-hotel-fill align-bottom"></i></b-button>
                         <b-button v-if="user.addresses[0].is_completed == 0" @click="update(user,'address')" variant="soft-danger" v-b-tooltip.hover title="Update Address" size="sm" class="remove-list me-1"><i class="ri-map-pin-fill align-bottom"></i></b-button>
                         <Link v-if="user.is_completed == 1" :href="`/scholars/${user.code}`"><b-button variant="soft-info" v-b-tooltip.hover title="View" size="sm" class="remove-list me-1"><i class="ri-eye-fill align-bottom"></i></b-button></Link>

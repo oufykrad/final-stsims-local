@@ -15,13 +15,14 @@ class UserProfile extends Model
         'middlename',
         'gender',
         'mobile',
-        'user_id',
-        'agency_id'
+        'profileable_type',
+        'profileable_id',
+        'user_id'
     ];
 
-    public function agency()
+    public function profileable()
     {
-        return $this->belongsTo('App\Models\ListAgency', 'agency_id', 'id');
+        return $this->morphTo();
     }
 
     public function setFirstnameAttribute($value)

@@ -16,9 +16,13 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {return inertia('Auth/Login'); });
 Route::middleware(['auth'])->group(function () {
     Route::resource('/home', App\Http\Controllers\HomeController::class);
+    Route::resource('/monitoring', App\Http\Controllers\MonitoringController::class);
     Route::resource('/staffs', App\Http\Controllers\StaffController::class);
     Route::resource('/schools', App\Http\Controllers\SchoolController::class);
     Route::resource('/scholars', App\Http\Controllers\Scholar\IndexController::class);
+    Route::resource('/enrollments', App\Http\Controllers\Scholar\EnrollmentController::class);
+    Route::resource('/financial-benefits', App\Http\Controllers\Scholar\FinancialBenefitController::class);
+    Route::resource('/reimbursements', App\Http\Controllers\Scholar\ReimbursementController::class);
 });
 
 require __DIR__.'/auth.php';

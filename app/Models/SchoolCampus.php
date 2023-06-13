@@ -69,6 +69,11 @@ class SchoolCampus extends Model
         return $this->belongsTo('App\Models\ListDropdown', 'grading_id', 'id');
     }
 
+    public function profile()
+    {
+        return $this->morphOne('App\Models\UserProfile', 'profileable');
+    }
+
     public function getCampusAttribute($value){
         return strtoupper($value);
     }

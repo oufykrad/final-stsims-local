@@ -15,8 +15,12 @@ class EnrollmentRequest extends FormRequest
     public function rules()
     {
         $hashids = new Hashids('krad',10);
-        $scholar_id = $hashids->decode($this->scholar_id);
-        $scholar_id = $scholar_id[0];
+        if($this->scholar_id){
+            $scholar_id = $hashids->decode($this->scholar_id);
+            $scholar_id = $scholar_id[0];
+        }else{
+            $scholar_id = null;
+        }
 
         return [
             'academic_year' => 'sometimes|required|string',

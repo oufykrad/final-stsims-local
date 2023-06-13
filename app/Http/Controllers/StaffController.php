@@ -3,10 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Setting;
 use App\Models\UserProfile;
+use App\Models\LocationRegion;
+use App\Models\LocationProvince;
 use App\Models\Log;
+use App\Models\SchoolCampus;
 use Illuminate\Http\Request;
 use App\Http\Resources\LogsResource;
+use App\Http\Resources\DefaultResource;
 use App\Http\Resources\StaffResource;
 use App\Http\Requests\StaffRequest;
 
@@ -16,7 +21,7 @@ class StaffController extends Controller
         if($request->search){
             $data = StaffResource::collection(
                 User::query()
-                ->with('profile.agency')
+                ->with('profile')
                 ->when($request->keyword, function ($query, $keyword) {
                     $query->whereHas('profile',function ($query) use ($keyword) {
                         $query->where(\DB::raw('concat(firstname," ",lastname)'), 'LIKE', "%{$keyword}%")
@@ -25,8 +30,14 @@ class StaffController extends Controller
                         $query->where('username', 'LIKE', "%{$keyword}%")->whereNotIn('role',['Scholar','Administrator']);
                     });
                 })
+                ->when($request->role, function ($query, $role) {
+                    $query->where('role',$role);
+                })
                 ->whereNotIn('role',['Scholar','Administrator'])
-                ->get()
+                ->paginate($request->counts)
+                ->loadMorph('profile.profileable', [ 
+                    SchoolCampus::class => ['school'],
+                ])
             );
             return $data;
         }else{
@@ -38,7 +49,27 @@ class StaffController extends Controller
         $data = \DB::transaction(function () use ($request){
             $password = rand(1000000000,9999999999);
             $data = User::create(array_merge($request->all(), ['password' => bcrypt($password), 'temp_password' => $password]));
-            $data->profile()->create($request->all());
+            $profile = [
+                'firstname' => $request->firstname,
+                'lastname' => $request->lastname,
+                'middlename' => $request->middlename,
+                'suffix' => $request->suffix,
+                'gender' => $request->gender,
+                'mobile' => $request->mobile,
+                'user_id' => $data->id
+            ];
+            if($request->role == 'PSTO Staff'){
+                $province = LocationProvince::where('code',$request->province)->first();
+                $province->profile()->create($profile);
+            }else if($request->role == 'University Coordinator'){
+                $school = SchoolCampus::where('id',$request->school)->first();
+                $school->profile()->create($profile);
+            }else{
+                $setting = Setting::with('agency')->first();
+                $province = LocationRegion::where('code',$setting->agency->region_code)->first();
+                $province->profile()->create($profile);
+            }
+            
             $id = $data->id;
             if($request->img != ''){
                 $data = $request->img;
@@ -83,24 +114,10 @@ class StaffController extends Controller
     {   
         $data = \DB::transaction(function () use ($request){
             $user = User::findOrFail($request->id);
-            if($request->type == 'token'){
-                $user = User::findOrFail($request->id);
-                $user->tokens()->delete();
-                $token = $user->createToken('kradworkz')->plainTextToken;
-                return $token;
-            }else if($request->type == 'revoke'){
-                $user = User::findOrFail($request->id);
-                $user->tokens()->delete();
-                return [
-                    'data' => '',
-                    'message' => 'User API Key revoked. Thanks',
-                    'type' => 'bx-mail-send'
-                ];
-            }else if($request->type === 'password'){
+            if($request->type === 'password'){
                 $user->update($request->except('img','editable','type'));
             }else if($request->type === 'verify'){
                 $user->verify();
-
                 return [
                     'data' => '',
                     'message' => 'User verification successfully send. Thanks',
@@ -111,7 +128,26 @@ class StaffController extends Controller
                 $data->update($request->except('img','editable'));
                 $profile = UserProfile::where('user_id',$request->id)->first();
                 $profile->update($request->except('email','role','is_active','img','editable'));
-                ($request->img != '') ? $data = $data->image($request->all()) : '';
+                $id = $data->id;
+                if($request->img != ''){
+                    $data = $request->img;
+                    $img = explode(',', $data);
+                    $ini =substr($img[0], 11);
+                    $type = explode(';', $ini);
+                    if($type[0] == 'png'){
+                        $image = str_replace('data:image/png;base64,', '', $data);
+                    }else{
+                        $image = str_replace('data:image/jpeg;base64,', '', $data);
+                    }
+                    $image = str_replace(' ', '+', $image);
+                    $imageName = $request->username.'.'.$type[0];
+                    
+                    if(\File::put(public_path('images/avatars'). '/' . $imageName, base64_decode($image))){
+                        $data = User::findOrFail($id);
+                        $data->avatar = $imageName;
+                        $data->save();
+                    }
+                }
                 $data = User::findOrFail($request->id);
                 return [
                     'data' => $data,

@@ -13,7 +13,8 @@ class NameResource extends JsonResource
             'firstname' => $this->profile->firstname,
             'lastname' => $this->profile->lastname,
             'middlename' => $this->profile->middlename,
-            'avatar' => ($this->user) ? $this->user->avatar : 'avatar.jpg'
+            'avatar' => 'avatar.jpg'
+            //($this->user) ? $this->user->avatar : 
         ];
     }
 }

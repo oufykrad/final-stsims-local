@@ -34,6 +34,11 @@ class Scholar extends Model
     {
         return $this->hasMany('App\Models\ScholarAddress', 'scholar_id');
     } 
+    
+    public function benefits()
+    {
+        return $this->hasMany('App\Models\ScholarBenefit', 'scholar_id');
+    } 
 
     public function status()
     {
@@ -48,6 +53,11 @@ class Scholar extends Model
     public function subprogram()
     {
         return $this->belongsTo('App\Models\ListProgram', 'subprogram_id', 'id');
+    } 
+
+    public function enrollments()
+    {
+        return $this->hasMany('App\Models\ScholarEnrollment', 'scholar_id')->orderBy('created_at','DESC');
     } 
 
     public function category()

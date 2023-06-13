@@ -4,6 +4,7 @@ namespace App\Http\Traits;
 
 use App\Models\User;
 use App\Models\Scholar;
+use App\Models\Setting;
 use App\Models\SchoolCampus;
 use App\Models\SchoolCourse;
 use App\Models\SchoolSemester;
@@ -20,11 +21,16 @@ trait SchoolTrait {
 
         $graduating = Scholar::whereHas('education',function ($query) use ($id) {
             $query->where('school_id',$id);
-        })->where('status_id',36)->count();
+        })->whereHas('status',function ($query) use ($id) {
+            $query->where('name','Graduated');
+        })
+        ->count();
 
         $ongoing = Scholar::whereHas('education',function ($query) use ($id) {
             $query->where('school_id',$id);
-        })->whereIn('status_id',[31,32,33,34,35])->count();
+        })->whereHas('status',function ($query) use ($id) {
+            $query->where('type','Ongoing');
+        })->count();
 
         $array = [
             ['counts' => $total, 'name' => 'Total Scholars', 'icon' => 'ri-group-2-line', 'color' => 'success'],
@@ -65,5 +71,22 @@ trait SchoolTrait {
         );
 
         return $data;
+    }
+
+    public static function active(){
+        $data = SchoolSemester::where('is_active',1)->pluck('school_id');
+        return $data;
+    }
+
+    public function statistics($request){
+        $setting = Setting::with('agency')->first();
+        $region = $setting->agency->region_code;
+
+        $array = [
+            SchoolCampus::where('region_code',$region)->where('assigned_region',$region)->count(),
+            SchoolCampus::where('region_code','!=',$region)->where('assigned_region',$region)->count(),
+            SchoolCampus::count(),
+        ];
+        return $array;
     }
 }

@@ -31,6 +31,12 @@
                     </Link>
                 </li>
                 <li class="nav-item">
+                    <Link class="nav-link menu-link" :class="{'active': $page.component.startsWith('Modules/Monitoring') }" href="/monitoring">
+                        <i class='bx bxs-webcam'></i>
+                        <span data-key="t-students">Monitoring</span>
+                    </Link>
+                </li>
+                <li class="nav-item">
                     <Link class="nav-link menu-link" :class="{'active': $page.component.startsWith('Modules/Staffs') }" href="/staffs">
                         <i class='bx bx-user-circle' ></i>
                         <span data-key="t-students">Staffs</span>
@@ -53,7 +59,19 @@
                         <i class='ri-team-fill'></i>
                         <span data-key="t-students">Scholars</span>
                     </Link>
-                </li>              
+                </li>       
+                <li class="nav-item">
+                    <Link class="nav-link menu-link" :class="{'active': $page.component.startsWith('Modules/Enrollments') }" href="/enrollments">
+                        <i class='ri-pages-line' ></i>
+                        <span data-key="t-students">Enrollments</span>
+                    </Link>
+                </li>    
+                <li class="nav-item">
+                    <Link class="nav-link menu-link" :class="{'active': $page.component.startsWith('Modules/FinancialBenefits') }" href="/financial-benefits">
+                        <i class='ri-wallet-3-fill ' ></i>
+                        <span data-key="t-students">Financial Benefits</span>
+                    </Link>
+                </li>   
             </ul>
             
             

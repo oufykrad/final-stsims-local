@@ -39,6 +39,11 @@ class ScholarEducation extends Model
         return $this->belongsTo('App\Models\ListCourse', 'course_id', 'id');
     }
 
+    public function subcourse()
+    {
+        return $this->belongsTo('App\Models\SchoolCourse', 'subcourse_id', 'id');
+    }
+    
     public function level()
     {
         return $this->belongsTo('App\Models\ListDropdown', 'level_id', 'id');

@@ -22,8 +22,7 @@ return new class extends Migration
             $table->string('suffix',10)->nullable();
             $table->string('gender',8);
             $table->string('mobile',15);
-            $table->tinyInteger('agency_id')->nullable()->unsigned();
-            $table->foreign('agency_id')->references('id')->on('list_agencies')->onDelete('cascade');
+            $table->morphs('profileable');
             $table->bigInteger('user_id')->unsigned()->index();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();

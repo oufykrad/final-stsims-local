@@ -4,10 +4,10 @@
     <PageHeader :title="title" :items="items" />
     <div class="chat-wrapper d-lg-flex gap-1 mx-n4 mt-n4 p-1">
         <div class="file-manager-sidebar">
-            <Sidebar />
+            <Sidebar :statuses="statuses" :programs="programs" @info="update()"/>
         </div>
         <div class="file-manager-content w-100 p-4 pb-0" style="height: calc(100vh - 180px)" ref="box">
-            <List :regions="regions" :programs="programs" :dropdowns="dropdowns" :statuses="statuses"/>
+            <List :regions="regions" :programs="programs" :dropdowns="dropdowns" :statuses="statuses" ref="lists"/>
         </div>
     </div>
 </template>
@@ -29,7 +29,9 @@ export default {
         
     },
     methods: {
-       
+        update(){
+            this.$refs.lists.fetch();
+        }
     }
 }
 </script>

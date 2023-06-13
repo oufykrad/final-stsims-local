@@ -6,9 +6,13 @@ use App\Models\Scholar;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Resources\Scholars\IndexResource;
+use App\Http\Traits\ScholarUpdate;
+use App\Http\Requests\ScholarRequest;
 
 class IndexController extends Controller
 {
+    use ScholarUpdate;
+
     public function index(Request $request){
         $type = $request->type;
 
@@ -17,7 +21,13 @@ class IndexController extends Controller
                 return $this->lists($request);
             break;
             case 'counts':
-                return $this->counts($request);
+                return [
+                    'statistics' => $this->statistics($request),
+                    'active' => []
+                ];
+            break;
+            case 'generate':
+                return $this->generate($request);
             break;
             default : 
             return inertia('Modules/Scholars/Index');
@@ -34,8 +44,8 @@ class IndexController extends Controller
             Scholar::
             with('addresses.region','addresses.province','addresses.municipality','addresses.barangay')
             ->with('profile')
-            ->with('program:id,name','subprogram:id,name','category:id,name','status:id,name,color,others')
-            ->with('education.school.school','education.course')
+            ->with('program:id,name','subprogram:id,name','category:id,name','status:id,name,type,color,others')
+            ->with('education.school.school','education.course','education.level')
             ->whereHas('profile',function ($query) use ($keyword) {
                 $query->when($keyword, function ($query, $keyword) {
                     $query->where(\DB::raw('concat(firstname," ",lastname)'), 'LIKE', '%'.$keyword.'%')
@@ -64,21 +74,28 @@ class IndexController extends Controller
                 ($info->status == null) ? '' : $query->where('status_id',$info->status);
                 ($info->year == null) ? '' : $query->where('awarded_year',$info->year);
              })
+             ->orderBy('awarded_year','ASC')
             ->paginate($info->counts)
             ->withQueryString()
         );
         return $data;
     }
 
-    public function counts($request){
-        $array = [
-            Scholar::whereHas('status',function ($query) {
-                $query->where('type','ongoing');
-            })->count(),
-           Scholar::whereHas('status',function ($query) {
-                $query->where('name','Graduated');
-            })->count(),Scholar::count()
-        ];
-        return $array;
+    public function store(ScholarRequest $request){
+        $data = \DB::transaction(function () use ($request){
+            switch($request->editable){
+                case 'update': 
+                    return $this->scholar($request);
+                break;
+                case 'course': 
+                    return $this->course($request);
+                break;
+            }
+        });
+        return back()->with([
+            'message' => 'Scholar updated successfully. Thanks',
+            'data' =>  $data,
+            'type' => 'bxs-check-circle'
+        ]); 
     }
 }

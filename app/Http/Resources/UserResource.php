@@ -27,6 +27,7 @@ class UserResource extends JsonResource
             'middlename' => $this->profile->middlename,
             'gender' => $this->profile->gender,
             'mobile' => $this->profile->mobile,
+            'userable' => $this->profile->profileable,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at
         ];

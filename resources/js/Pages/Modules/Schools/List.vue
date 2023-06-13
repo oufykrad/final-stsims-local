@@ -149,7 +149,7 @@ export default {
                     province: (this.province) ? this.province.code : '',
                     municipality: (this.municipality) ? this.municipality.code : '',
                     counts: ((window.innerHeight-410)/56),
-                    lists: true
+                    type: 'lists'
                 }
             })
             .then(response => {
