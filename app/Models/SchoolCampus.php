@@ -74,6 +74,11 @@ class SchoolCampus extends Model
         return $this->morphOne('App\Models\UserProfile', 'profileable');
     }
 
+    public function scholars()
+    {
+        return $this->hasMany('App\Models\ScholarEducation', 'school_id');
+    } 
+
     public function getCampusAttribute($value){
         return strtoupper($value);
     }

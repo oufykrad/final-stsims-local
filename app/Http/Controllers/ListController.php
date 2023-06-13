@@ -63,16 +63,16 @@ class ListController extends Controller
 
     public function courses(Request $request){
         $keyword = $request->input('word');
-        $data = SchoolCourse::with('course')
-        ->when($request->school_id, function ($query, $school_id) {
-            $query->where('school_id',$school_id);
-        })
-        ->whereHas('course',function ($query) use ($keyword) {
-            $query->where('name','LIKE','%'.$keyword.'%');
-        })
-        ->get()->take(10);
-        // $data = ListCourse::where('name','LIKE','%'.$keyword.'%')->get()->take(10);
-        return CourseListResource::collection($data);
+        // $data = SchoolCourse::with('course')
+        // ->when($request->school_id, function ($query, $school_id) {
+        //     $query->where('school_id',$school_id);
+        // })
+        // ->whereHas('course',function ($query) use ($keyword) {
+        //     $query->where('name','LIKE','%'.$keyword.'%');
+        // })
+        // ->get()->take(10);
+        $data = ListCourse::where('name','LIKE','%'.$keyword.'%')->get()->take(10);
+        return DefaultResource::collection($data);
     }
 
     public function subcourses($school,$course){
