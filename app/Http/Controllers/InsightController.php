@@ -259,7 +259,7 @@ class InsightController extends Controller
     public function years(Request $request){
         $provinces = ScholarAddress::where('is_permanent',1)->groupBy('province_code')->pluck('province_code');
         $programs = ListProgram::where('is_sub',1)->get();
-        $current_year =  date('Y'); $years = []; 
+        $current_year =  date('Y'); $years = [];
         $province = ($request->province) ? $request->province : null;
         $is_undergrad = ($request->is_undergrad != null) ? $request->is_undergrad : null;
         $pro = ($request->program) ? $request->program : null;
@@ -268,8 +268,8 @@ class InsightController extends Controller
         $prog = []; 
         foreach($programs as $program){
             $data = []; $year = $current_year - 20;
-            for($year; $year <= $current_year; $year++){d
-                $years[] = $year;
+            for($year; $year <= $current_year; $year++){
+          $years[] = $year;
                 $data[] = ListProgram::where('id',$program->id)->withCount([
                 'scholar', 
                 'scholar as scholar_count' => function ($query) use ($year,$province,$is_undergrad,$pro){
