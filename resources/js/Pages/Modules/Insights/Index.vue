@@ -3,7 +3,27 @@
     <PageHeader :title="title" :items="items" />
     <b-row style="height: calc(100vh - 225px); overflow: auto;">
         <b-col xxl="4">
-
+            <b-card no-body>
+                <b-card-body>
+                    <div class="d-flex align-items-center">
+                        <div class="avatar-sm flex-shrink-0">
+                            <span class="avatar-title bg-light text-primary rounded-circle fs-3">
+                                <i :class="`bx bx-user align-middle`"></i>
+                            </span>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <p class="text-uppercase fw-semibold fs-12 text-muted mb-1">
+                               sdadada
+                            </p>
+                            <h4 class="mb-0">
+                                <span class="counter-value">
+                               2131
+                                </span>
+                            </h4>
+                        </div>
+                    </div>
+                </b-card-body>
+            </b-card>
         </b-col>
         <b-col xxl="8" order-xxl="0" class="order-first">
             <b-row>
@@ -48,7 +68,7 @@
             <Location :locations="locations" :total="total" :region_code="region_code"/>
         </b-col>
          <b-col xxl="8">
-            <Program/>
+            <Program :region_code="region_code"/>
         </b-col>
         <b-col xxl="4">
             <School :schools="schools" :total="total" :ongoing="ongoing" :graduated="graduated"/>
@@ -130,7 +150,7 @@ export default {
             axios.get(this.currentUrl + '/insights', {
                 params: {
                     type: 'lists',
-                    region_code: this.region_code
+                    region_code: (this.region_code) ? null : this.region_code
                 }
             })
             .then(response => {

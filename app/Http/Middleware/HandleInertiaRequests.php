@@ -10,10 +10,12 @@ use App\Models\ListProgram;
 use App\Models\ListDropdown;
 use App\Models\ListAgency;
 use App\Models\ListStatus;
+use App\Models\ListExpense;
 use App\Models\LocationRegion;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 use App\Http\Resources\UserResource;
+use App\Http\Resources\SettingResource;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -26,10 +28,21 @@ class HandleInertiaRequests extends Middleware
 
     public function share(Request $request): array
     {
-        $agency_id = Setting::first()->pluck('agency_id');
-        $agency = ListAgency::with('region')->where('id',$agency_id[0])->first();
-        $region_code = $agency->region_code;
 
+        $expenditures = ListDropdown::where('classification','Expenditure')->get();
+        $lists = [];
+        foreach($expenditures as $expenditure){
+            $expenses = ListExpense::where('expenditure_id',$expenditure->id)->get();
+            $lists[] = [
+                'language' => $expenditure->name,
+                'libs' => $expenses
+            ];
+        }
+
+        $settings = Setting::with('agency.region')->first();
+        $region_code = $settings->agency->region_code;
+        $semester_year = $settings->year;
+ 
         return array_merge(parent::share($request), [
             'auth' => (\Auth::check()) ? new UserResource(\Auth::user()) : '',
             'role' => (\Auth::check()) ? \Auth::user()->role : '',
@@ -41,14 +54,13 @@ class HandleInertiaRequests extends Middleware
             'regions' => LocationRegion::all(),
             'dropdowns' => ListDropdown::all(),
             'programs' => ListProgram::all(),
+            'expenses' => $lists,
             'statuses' => ListStatus::all(),
-            // 'expenses' => ListExpense::all(),
             'privileges' => ListPrivilege::all(),
-            // 'colleges' => College::all(),
-            // 'courses' => Course::all(),
-            // 'dropdowns' => Dropdown::all(),
+            'agencies' => ListAgency::all(),
             'region_code' => $region_code,
-            'agencies' => ListAgency::all()
+            'semester_year' => $semester_year,
+            'settings' => new SettingResource($settings)
         ]);
     }
 }

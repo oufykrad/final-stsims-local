@@ -186,6 +186,7 @@ export default {
                 forceFormData: true,
                 onSuccess: (response) => {
                     this.showModal = false;
+                    this.clear();
                 },
                 onError: () => {
                     this.errors = this.$page.props.errors;
@@ -193,9 +194,11 @@ export default {
             });
         },
         clear(){
+            var searchInput = document.getElementById("search-options");
+            searchInput.value = '';
             this.reimbursement.scholar = '';
             this.reimbursement.amount = '';
-            this.reimbursement.files = '';
+            this.reimbursement.files = [];
             this.reimbursement.remarks = '';
             this.reimbursement.semester = '';
             this.reimbursement.privilege = '';

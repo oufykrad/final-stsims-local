@@ -23,7 +23,9 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('/enrollments', App\Http\Controllers\Scholar\EnrollmentController::class);
     Route::resource('/financial-benefits', App\Http\Controllers\Scholar\FinancialBenefitController::class);
     Route::resource('/reimbursements', App\Http\Controllers\Scholar\ReimbursementController::class);
+    Route::resource('/accounting', App\Http\Controllers\AccountingController::class);
     Route::resource('/insights', App\Http\Controllers\InsightController::class);
+    Route::resource('/settings', App\Http\Controllers\SettingController::class);
 });
 
 require __DIR__.'/auth.php';

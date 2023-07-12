@@ -93,9 +93,63 @@ border-top: none !important;
 
         $digit = new NumberFormatter("en", NumberFormatter::SPELLOUT);
         $number = $digit->format($benefits['total']);
+        
+        $lists = json_encode($lists); 
+        $lists = json_decode($lists, true); 
+       
     ?>
 
-    <!-- <div style="font-family:Calibri;">
+    <div style="font-family:Calibri;">
+        <center style="font-size: 12px; font-family:Arial, Helvetica, sans-serif; font-weight: bold;">DOST-SEI SCHOLARSHIP PAYMENTS FOR CREDIT TO THE</center>
+        <center style="font-size: 12px; font-family:Arial, Helvetica, sans-serif; font-weight: bold;">SA-LBP ACCOUNTS OF SCHOLARS RA 7687</center>
+    </div>
+
+    <table style="font-size: 9px; font-family:Arial, Helvetica, sans-serif; width: 100%; margin-top: 25px;  margin-left: auto; margin-right: auto;">
+        <tr>
+            <td style="width: 10%; text-align: center; font-family:Arial, Helvetica, sans-serif; font-style: bold; padding: 5px;">ACCOUNT NO.</td>
+            <td style="width: 1%; text-align: center; font-family:Arial, Helvetica, sans-serif; font-style: bold; padding: 5px;">NO.</td>
+            <td style="width: 15%; text-align: center; font-family:Arial, Helvetica, sans-serif; font-style: bold; padding: 5px;">NAME</td>
+            @foreach($lists as $list)
+            <td style="text-align: center; font-family:Arial, Helvetica, sans-serif; font-style: bold; padding: 5px;">{{$list}}</td>
+            @endforeach
+            <td style="width: 12%; text-align: center; font-family:Arial, Helvetica, sans-serif; font-style: bold; padding: 5px;">TOTAL</td>
+        </tr>
+        @foreach($benefits['lists'] as $index=>$benefit)
+        <tr style="font-size: 9px;">
+            <td style="font-family:Arial, Helvetica, sans-serif; text-align: center;">{{$benefit['account_no']}}</td>
+            <td style="font-family:Arial, Helvetica, sans-serif; text-align: center;">{{($index++)+1}}</td>
+            <td style="font-family:Arial, Helvetica, sans-serif; text-align: center;">{{ucwords(strtolower($benefit['name']))}}</td>
+            @foreach($lists as $list)
+            <td style="text-align: center; font-family:Arial, Helvetica, sans-serif;">{{$list}}</td>
+            @endforeach
+            <td style="font-family:Arial, Helvetica, sans-serif; text-align: center;">{{ number_format($benefit['total'],2)}}</td>
+        </tr>
+        @endforeach
+    </table>
+
+    <div style="margin-top: 60px; font-family:Arial, Helvetica, sans-serif;">
+        <div style="float: right; width: 240px;">
+            <p style="font-family:Arial, Helvetica, sans-serif; margin-top: -25px; margin-left: 0px; font-size: 10px; font-weight: bold;">Prepared By:</p>
+            <span class="nor" style="font-size: 12px;"></span>
+            <hr style="height:1px;border:none;color:#333;background-color:#333; margin-bottom: 1px; margin-top: 0px;" />
+        </div>
+
+        <div style="float: left; width: 240px;">
+            <p style="font-family:Arial, Helvetica, sans-serif; margin-top: -25px; margin-left: 0px; font-size: 10px; font-weight: bold;">Certified Correct:</p>
+            <span class="nor" style="font-size: 12px;"></span>
+            <hr style="height:1px;border:none;color:#333;background-color:#333; margin-bottom: 1px; margin-top: 0px;" />
+        </div>
+
+        <div style="float: left; width: 240px; margin-left: -240px; margin-top: 100px;">
+            <p style="font-family:Arial, Helvetica, sans-serif; margin-top: -25px; margin-left: 0px; font-size: 10px; font-weight: bold;">Approved By:</p>
+            <span class="nor" style="font-size: 12px;"></span>
+            <hr style="height:1px;border:none;color:#333;background-color:#333; margin-bottom: 1px; margin-top: 0px;" />
+        </div>
+    </div>
+
+    <div class="page-break"></div>
+
+    <div style="font-family:Calibri;">
         <span style="position: absolute; top: -10; left: 40; font-size: 11px;">{{date('d M Y',strtotime(now() . ' +1 day'))}}</span>
         <span style="position: absolute; top: -10; right: 40; font-size: 11px;">Page no. 1</span>
         <img src="{{ asset('images/lbp.png') }}" style="position: absolute; top: 0; left: 40; width: 60px; height: 60px;">
@@ -157,8 +211,9 @@ border-top: none !important;
                 <td style="width: 30%; text-align: center; font-style: bold; border-left: none; border-right: none; padding: 5px;">Hash Total: {{ number_format('10236482000',2) }}</td>
             </tr>
         </table>
+    </div>
 
-    <div class="page-break"></div> -->
+    <div class="page-break"></div>
 
     
     <div style="font-family:Calibri;">
@@ -169,7 +224,7 @@ border-top: none !important;
             <span style="font-size: 16px; font-family:Arial, Helvetica, sans-serif; font-weight: bold;">DEPARTMENT OF SCIENCE AND TECHNOLOGY</span><br />
             <span style="font-size: 14px; font-family:Arial, Helvetica, sans-serif;">Regional Office IX</span>
         </div>
-        <span style="font-family:Arial, Helvetica, sans-serif; position: absolute; top: 100; right: 140; font-size: 16px;">{{date('d M Y',strtotime(now() . ' +1 day'))}}</span>
+        <span style="font-family:Arial, Helvetica, sans-serif; position: absolute; top: 100; right: 140; font-size: 16px;">{{date('d M Y',strtotime(now()))}}</span>
 
         <center style="font-size: 24px; letter-spacing: .5rem; margin-top: 140px; font-family:Arial, Helvetica, sans-serif; font-weight: bold;">CERTIFICATION</center>
         <p style="font-family:Arial, Helvetica, sans-serif; margin-top:50px; margin-left: 80px; margin-right: 80px; font-size: 15px; text-indent: 50px; text-align: justify; text-justify: inter-word;">This is to authorized <span style="font-family:Arial, Helvetica, sans-serif; font-weight:bold;">Land bank of the Philippines</span> (LBP) to debit the amount of <span style="font-family:Arial, Helvetica, sans-serif; font-weight:bold;">{{strtoupper($number)}} PESOS (Php {{number_format($benefits['total'],2)}})</span> from the <span style="font-family:Arial, Helvetica, sans-serif; font-weight:bold;">DOST-SEI S&T Scholarship Fund</span> with <span style="font-family:Arial, Helvetica, sans-serif; font-weight:bold;">Account No. 1952-1000-64</span> to the attached Payroll Register Batch 00052.</p>

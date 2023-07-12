@@ -35,13 +35,7 @@
                         <i class='bx bxs-webcam'></i>
                         <span data-key="t-students">Monitoring</span>
                     </Link>
-                </li>
-                <li class="nav-item">
-                    <Link class="nav-link menu-link" :class="{'active': $page.component.startsWith('Modules/Staffs') }" href="/staffs">
-                        <i class='bx bx-user-circle' ></i>
-                        <span data-key="t-students">Staffs</span>
-                    </Link>
-                </li>    
+                </li>  
                 <!-- <li class="nav-item">
                     <Link class="nav-link menu-link" :class="{'active': $page.component.startsWith('Modules/Course') }" href="/courses">
                         <i class='bx bxs-graduation'></i>
@@ -73,9 +67,27 @@
                     </Link>
                 </li>   
                 <li class="nav-item">
+                    <Link class="nav-link menu-link" :class="{'active': $page.component.startsWith('Modules/Accounting') }" href="/accounting">
+                        <i class='ri-hand-coin-fill' ></i>
+                        <span data-key="t-students">Accounting</span>
+                    </Link>
+                </li>
+                <li class="nav-item">
                     <Link class="nav-link menu-link" :class="{'active': $page.component.startsWith('Modules/Insights') }" href="/insights">
                         <i class='ri-line-chart-fill' ></i>
                         <span data-key="t-students">Insights</span>
+                    </Link>
+                </li>
+                <li class="nav-item">
+                    <Link class="nav-link menu-link" :class="{'active': $page.component.startsWith('Modules/Staffs') }" href="/staffs">
+                        <i class='bx bx-user-circle' ></i>
+                        <span data-key="t-students">Staffs</span>
+                    </Link>
+                </li>  
+                <li class="nav-item">
+                    <Link class="nav-link menu-link" :class="{'active': $page.component.startsWith('Modules/Settings') }" href="/settings">
+                        <i class='ri-settings-5-fill' ></i>
+                        <span data-key="t-students">Settings</span>
                     </Link>
                 </li>
             </ul>

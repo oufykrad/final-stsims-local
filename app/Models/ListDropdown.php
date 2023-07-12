@@ -11,11 +11,6 @@ class ListDropdown extends Model
     protected $guarded = [];
     public $timestamps = false;
 
-    public function status()
-    {
-        return $this->hasMany('App\Models\Scholar', 'status_id');
-    } 
-
     public function expenses()
     {
         return $this->hasMany('App\Models\ListExpense', 'expenditure_id');

@@ -13,6 +13,7 @@ class SchoolSemester extends Model
         'academic_year',
         'start_at',
         'end_at',
+        'year',
         'semester_id',
         'school_id',
         'is_active'
@@ -30,7 +31,7 @@ class SchoolSemester extends Model
 
     public function benefits()
     {
-        return $this->hasMany('App\Models\BenefitList', 'school_semester_id');
+        return $this->hasMany('App\Models\ScholarBenefit', 'school_semester_id');
     } 
 
     // public function getStartAtAttribute($value)

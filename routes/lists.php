@@ -15,6 +15,7 @@ Route::prefix('lists')->group(function(){
             Route::post('/schools', 'schools');
             Route::post('/courses', 'courses');
             Route::post('/scholars', 'scholars');
+            Route::post('/expenses', 'expenses');
         });
     });
 });

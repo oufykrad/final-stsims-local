@@ -30,6 +30,7 @@
         "npm": "^9.4.2",
         "prismjs": "^1.29.0",
         "simplebar-vue3": "^0.2.0",
+        "v-money": "^0.8.1",
         "vue": "^3.2.47",
         "vue-datepicker-next": "^1.0.2",
         "vue-flatpickr-component": "^11.0.1",

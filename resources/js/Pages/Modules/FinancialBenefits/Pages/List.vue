@@ -41,8 +41,8 @@
                             <td class="text-end">
                                 <b-button @click="print(list.id)" variant="soft-primary" v-b-tooltip.hover title="Print" size="sm" class="edit-list me-1"><i class="ri-printer-fill align-bottom"></i> </b-button>
                                 <b-button @click="viewLbp(list)" variant="soft-warning" v-b-tooltip.hover title="View LBP" size="sm" class="edit-list me-1"><i class="ri-bank-line align-bottom"></i> </b-button>
-                                <b-button @click="view(list)" variant="soft-info" v-b-tooltip.hover title="View" size="sm" class="edit-list me-1"><i class="ri-eye-fill align-bottom"></i> </b-button>
-                                <b-button v-if="list.status.name != 'Released'" @click="complete(list,index)" variant="soft-success" v-b-tooltip.hover title="Mark as Completed" size="sm" class="edit-list me-1"><i class="ri-checkbox-circle-fill align-bottom"></i> </b-button>
+                                <b-button @click="viewList(list)" variant="soft-info" v-b-tooltip.hover title="View" size="sm" class="edit-list me-1"><i class="ri-eye-fill align-bottom"></i> </b-button>
+                                <b-button v-if="list.status.name != 'Released'" @click="viewConfirmation(list,index)" variant="soft-success" v-b-tooltip.hover title="Mark as Completed" size="sm" class="edit-list me-1"><i class="ri-checkbox-circle-fill align-bottom"></i> </b-button>
                             </td>
                         </tr>
                     </tbody>
@@ -52,12 +52,16 @@
         </b-col>
     </b-row>
     <LBP ref="lbp"/>
+    <Confirm ref="confirm"/>
+    <List ref="list"/>
 </template>
 <script>
 import LBP from '../Modals/LBP.vue';
+import List from '../Modals/List.vue';
+import Confirm from '../Modals/Confirm.vue';
 import Pagination from "@/Shared/Components/Pagination.vue";
 export default {
-    components : { Pagination, LBP },
+    components : { Pagination, LBP, Confirm, List },
     data(){
         return {
             currentUrl: window.location.origin,
@@ -72,6 +76,21 @@ export default {
     },
     created(){
         this.fetch();
+    },
+    computed: {
+        datares() {
+            return this.$page.props.flash.datares;
+        },
+    },
+    watch: {
+        datares: {
+            deep: true,
+            handler(val = null) {
+                if(val != null && val !== ''){
+                    this.fetch();
+                }
+            },
+        },
     },
     methods: {
         fetch(page_url){
@@ -100,6 +119,13 @@ export default {
         },
         viewLbp(data){
             this.$refs.lbp.set(data);
+        },
+        viewConfirmation(data,index){
+            this.index =  index;
+            this.$refs.confirm.set(data);
+        },
+        viewList(data){
+            this.$refs.list.set(data);
         },
         print(id){
             window.open(this.currentUrl + '/financial-benefits/'+id+'/edit');

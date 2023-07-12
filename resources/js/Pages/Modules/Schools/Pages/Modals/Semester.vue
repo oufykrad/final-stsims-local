@@ -75,6 +75,7 @@ export default {
                 to: '',
                 start: '',
                 end: '',
+                year: '',
                 semester: {}
             },
             id: '',
@@ -86,6 +87,7 @@ export default {
     computed : {
         academic_year : function(){
             if(this.semester.from != ''){
+                this.year = new Date(this.semester.from).getFullYear();
                 return new Date(this.semester.from).getFullYear()+'-'+ (Number(new Date(this.semester.from).getFullYear())+1);
             }else{
                 return '';
@@ -104,6 +106,7 @@ export default {
                 academic_year: (this.semester.from) ? this.academic_year : '',
                 start_at: (this.semester.start != '') ? new Date(this.semester.start).toLocaleDateString("af-ZA") : '',
                 end_at: (this.semester.end != '') ? new Date(this.semester.end.getFullYear(),this.semester.end.getMonth() + 1, 0).toLocaleDateString("af-ZA"): '',
+                year: this.year,
                 semester_id: this.semester.semester.id,
                 editable: false,
                 option: 'semester'

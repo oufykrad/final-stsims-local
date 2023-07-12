@@ -11,6 +11,7 @@ use App\Models\ScholarBenefit;
 use App\Models\SchoolSemester;
 use App\Models\SchoolCampus;
 use Illuminate\Http\Request;
+use App\Http\Resources\MonitoringResource;
 
 class MonitoringController extends Controller
 {
@@ -22,8 +23,9 @@ class MonitoringController extends Controller
                 $array = [
                     'grades' => $this->grades(),
                     'benefits' => $this->benefits(),
+                    'termination' => $this->termination(),
                     'enrolled' => $this->enrolled(),
-                    'semesters' => $this->semesters(),
+                    'semesters' => $this->semesters($request),
                     'schools' => $this->schools(),
                     'scholars' => $this->scholars(),
                     'total' => Scholar::count()
@@ -50,14 +52,52 @@ class MonitoringController extends Controller
         ->whereHas('semester',function ($query){
             $query->where('is_active',0);
         })
+        ->whereHas('scholar',function ($query){
+            $query ->whereHas('status',function ($query){
+                $query->where('type','ongoing');
+            });
+        })
         ->pluck('scholar_id');
         return $data;
     }
 
+    public function termination(){
+        $data = ScholarEnrollment::withCount([
+        'lists' => function ($query) {
+            $query->where('grade','F')->groupBy('enrollment_id');
+        }])
+        ->whereHas('scholar',function ($query){
+            $query ->whereHas('status',function ($query){
+                $query->where('type','ongoing');
+            });
+        })
+        ->having('lists_count', '>', 1)
+        ->pluck('scholar_id');
+        $scholars = Scholar::with('profile:id,scholar_id,firstname,lastname,middlename')->whereIn('id',$data)->get();
+        return MonitoringResource::collection($scholars);
+    }
+
+    public function enrollment(){
+        $data = ScholarEnrollment::withCount([
+        'lists' => function ($query) {
+            $query->where('grade','F')->groupBy('enrollment_id');
+        }])
+        ->whereHas('scholar',function ($query){
+            $query ->whereHas('status',function ($query){
+                $query->where('type','ongoing');
+            });
+        })
+        ->having('lists_count', '>', 1)
+        ->pluck('scholar_id');
+        $scholars = Scholar::with('profile:id,scholar_id,firstname,lastname,middlename')->whereIn('id',$data)->get();
+        return MonitoringResource::collection($scholars);
+    }
+
     public function benefits(){
         $date = date('Y-m-d');
-        $data = ScholarBenefit::where('status_id',11)->where('month','<=',$date)->groupBy('scholar_id')->pluck('scholar_id');
-        return $data;
+        $data = ScholarBenefit::whereIn('status_id',[11,12])->where('month','<=',$date)->groupBy('scholar_id')->pluck('scholar_id');
+        $scholars = Scholar::with('profile:id,scholar_id,firstname,lastname,middlename')->whereIn('id',$data)->get();
+        return MonitoringResource::collection($scholars);
     }
 
     public function enrolled(){
@@ -67,8 +107,8 @@ class MonitoringController extends Controller
         return $data;
     }
 
-    public function semesters(){
-        $data = SchoolSemester::where('is_active',1)->pluck('school_id');
+    public function semesters($request){
+        $data = SchoolSemester::where('year',$request->semester_year)->where('is_active',1)->pluck('school_id');
         return $data;
     }
 

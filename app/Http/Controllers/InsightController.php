@@ -11,6 +11,7 @@ use App\Models\ListAgency;
 use App\Models\ListCourse;
 use App\Models\ListProgram;
 use App\Models\LocationProvince;
+use App\Models\LocationMunicipality;
 use App\Models\SchoolCampus;
 use Illuminate\Http\Request;
 
@@ -74,7 +75,7 @@ class InsightController extends Controller
         $array = [];
         $data = Scholar::select('awarded_year AS x',\DB::raw('count(*) AS y'))
         ->when($code, function ($query, $code) {
-            $query ->whereHas('addresses',function ($query) use ($code) {
+            $query->whereHas('addresses',function ($query) use ($code) {
                 $query->where('province_code',$code);
             });
         })
@@ -130,7 +131,7 @@ class InsightController extends Controller
             'number' => ($len != 0 && $len != 1) ? $d = $data[$len-1]['y']-$data[$len-2]['y'] : 0,
             'percent' => ($len != 0 && $len != 1) ? round($d/$data[$len-1]['y']*100) : 0,
             'total' => Scholar::when($code, function ($query, $code) {
-                    $query ->whereHas('address',function ($query) use ($code) {
+                    $query ->whereHas('addresses',function ($query) use ($code) {
                         $query->where('province_code',$code)->where('is_permanent',1);
                     });
                 })->whereHas('status',function ($query) {
@@ -176,7 +177,7 @@ class InsightController extends Controller
         $len = count($data);
 
         $arr = [
-            'name' => 'Graduates',
+            'name' => 'Graduated',
             'data' => $data
         ];
         array_push($array,$arr);
@@ -190,10 +191,8 @@ class InsightController extends Controller
             'percent' => ($len != 0 && $len != 1) ? round($d/$data[$len-1]['y']*100) : 0,
             'total' => ScholarEducation::when($code, function ($query, $code) {
                 $query ->whereHas('scholar',function ($query) use ($code) {
-                    $query ->whereHas('profile',function ($query) use ($code) {
-                        $query ->whereHas('address',function ($query) use ($code) {
-                            $query->where('province_code',$code);
-                        });
+                    $query ->whereHas('addresses',function ($query) use ($code) {
+                        $query->where('province_code',$code)->where('is_permanent',1);
                     });
                 });
             })->whereNotNull('graduated_year')->count(),
@@ -211,8 +210,9 @@ class InsightController extends Controller
     }
 
     public function location($request){
-        $region_code = $request->region_code;
-        $provinces = ScholarAddress::where('region_code',$region_code)->groupBy('province_code')->pluck('province_code');
+        $provinces = ScholarAddress::when($request->region_code, function ($query, $region_code) {
+            $query->where('region_code',$region_code);
+        })->groupBy('province_code')->pluck('province_code');
         $provinces = LocationProvince::withCount('scholars')->whereIn('code',$provinces)->orderBy('scholars_count','DESC')->get();
         $programs = ListProgram::where('is_sub',1)->get();
 
@@ -233,7 +233,9 @@ class InsightController extends Controller
             $array[] = [
                 'province' => $province->name,
                 'code' => $province->code,
+                'region_code' => $province->region_code,
                 'count' => $count,
+                'is_chartered' => $province->is_chartered,
                 'total' => array_sum($count)
             ];
         }
@@ -262,7 +264,6 @@ class InsightController extends Controller
         $programs = ListProgram::where('is_sub',1)->get();
         $current_year = $request->year; $years = []; 
         $province = ($request->province) ? $request->province : null;
-        $is_undergrad = ($request->is_undergrad != null) ? $request->is_undergrad : null;
         $pro = ($request->program) ? $request->program : null;
 
 
@@ -273,12 +274,11 @@ class InsightController extends Controller
                 $years[] = $year;
                 $data[] = ListProgram::where('id',$program->id)->withCount([
                 'scholar', 
-                'scholar as scholar_count' => function ($query) use ($year,$province,$is_undergrad,$pro){
+                'scholar as scholar_count' => function ($query) use ($year,$province,$pro){
                     $query->where('awarded_year', $year)
                     ->whereHas('addresses',function ($query) use ($province,$pro) {
                         ($province != null) ? $query->where('province_code', $province)->where('is_permanent',1) : '';
                     });
-                    ($is_undergrad != null) ? $query->where('is_undergrad', $is_undergrad) : '';
                     ($pro != null) ? $query->where('program_id', $pro) : '';
                 }])->pluck('scholar_count')->first();
             }
@@ -293,6 +293,123 @@ class InsightController extends Controller
             'categories' => $years,
             'programs' => $programs,
             'provinces' => LocationProvince::whereIn('code',$provinces)->get(),
+            'lists' => $arr
+        ];
+    }
+
+    public function chartered($code){
+        $programs = ListProgram::where('is_sub',1)->get();
+        $municipalities = LocationMunicipality::where('is_chartered',1)->where('province_code',$code)->get();
+        $arr3 = [];
+        foreach($municipalities as $municipality){
+            $districts = ScholarAddress::select('district', \DB::raw('count(*) as total'))
+            ->where('municipality_code',$municipality->code)
+            ->groupBy('district')->get();
+           
+            $array2 = [];
+            foreach($districts as $district){
+                $dis = $district->district;
+                $array = [];
+                foreach($programs as $program){
+                    $data = Scholar::whereHas('addresses',function ($query) use ($municipality,$dis) {
+                        $query->where('municipality_code',$municipality->code)->where('district',$dis)->where('is_permanent',1);
+                    })
+                    ->where('program_id',$program->id)->count();
+
+                    $array[] = [
+                        'program' => $program->name,
+                        'count' => $data
+                    ];
+                }
+                $array2[] = [
+                    'district' => ($district->district != null) ? $district->district : 'not set',
+                    'counts' => $array,
+                    'total' => $district->total
+                ];
+            }
+
+            $arr3[] =[
+                'municipality' => $municipality->name,
+                'data' => $array2
+            ];
+
+        }
+        return $arr3;
+    }
+
+    public function edit($code){
+        $programs = ListProgram::where('is_sub',1)->get();
+        $province = LocationProvince::withCount('scholars')->with('region')->where('code',$code)->first();
+
+        $districts = ScholarAddress::select('district', \DB::raw('count(*) as total'))
+        ->whereHas('municipality',function ($query) {
+            $query->where('is_chartered',0);
+        })
+        ->where('province_code',$code)->groupBy('district')->get();
+        
+        $array2 = [];
+        foreach($districts as $district){
+            $dis = $district->district;
+            $array = [];
+            foreach($programs as $program){
+                $data = Scholar::whereHas('addresses',function ($query) use ($code,$dis) {
+                    $query->where('province_code',$code)->where('district',$dis)->where('is_permanent',1);
+                })
+                ->where('program_id',$program->id)->count();
+
+                $array[] = [
+                    'program' => $program->name,
+                    'count' => $data
+                ];
+            }
+            $array2[] = [
+                'district' => $district->district,
+                'counts' => $array,
+                'total' => $district->total
+            ];
+        }
+
+        return [
+            'first' => $this->second($code),
+            'province' => $province,
+            'districts' => $array2,
+            'programs' => $programs,
+            'categories' => $this->years2($code),
+            'chartered' => $this->chartered($code)
+            // 'count' => $count,
+            // 'code' => $code
+        ];
+    }
+
+    public function years2($code){
+        $programs = ListProgram::where('is_sub',1)->get();
+        $current_year =  date('Y'); $years = [];
+        $province = $code;
+
+        $prog = []; 
+        foreach($programs as $program){
+            $data = []; $year = $current_year - 20;
+            for($year; $year <= $current_year; $year++){
+                $years[] = $year;
+                $data[] = ListProgram::where('id',$program->id)->withCount([
+                'scholar', 
+                'scholar as scholar_count' => function ($query) use ($year,$province){
+                    $query->where('awarded_year', $year)
+                        ->whereHas('addresses',function ($query) use ($province) {
+                            ($province != null) ? $query->where('province_code', $province)->where('is_permanent',1) : '';
+                        });
+                }])->pluck('scholar_count')->first();
+            }
+            $arr[] = [
+                'name' => $program->name,
+                'data' => $data  
+            ];
+            
+        }
+
+        return $y =[
+            'categories' => $years,
+            'programs' => $programs,
             'lists' => $arr
         ];
     }

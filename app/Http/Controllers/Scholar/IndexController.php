@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Scholar;
 
+use Hashids\Hashids;
 use App\Models\Scholar;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -17,6 +18,9 @@ class IndexController extends Controller
         $type = $request->type;
 
         switch($type){
+            case 'ongoing':
+                return $this->ongoing($request);
+            break;
             case 'lists':
                 return $this->lists($request);
             break;
@@ -97,5 +101,44 @@ class IndexController extends Controller
             'data' =>  $data,
             'type' => 'bxs-check-circle'
         ]); 
+    }
+
+    public function show($data){
+        $hashids = new Hashids('krad',10);
+        $id = $hashids->decode($data);
+        
+        $data = Scholar::
+        with('addresses.region','addresses.province','addresses.municipality','addresses.barangay')
+        ->with('profile')
+        ->with('program:id,name','subprogram:id,name','category:id,name','status:id,name,type,color,others')
+        ->with('education.school.school','education.course','education.level')
+        ->where('id',$id)->first();
+
+        $benefits = [];
+
+        return inertia('Modules/Scholars/Profile/Index',[
+            'user' => new IndexResource($data),
+            'benefits' => $benefits
+        ]);
+    }
+
+    public function ongoing($request){
+        $data = IndexResource::collection(
+            Scholar::
+            with('addresses.region','addresses.province','addresses.municipality','addresses.barangay')
+            ->with('profile')
+            ->with('program:id,name','subprogram:id,name','category:id,name','status:id,name,type,color,others')
+            ->with('education.school.school','education.course','education.level')
+            ->whereHas('status',function ($query) {
+                $query->where('type','ongoing');
+            })
+            ->when($request->status, function ($query, $status) {
+                $query->where('status_id',$status);
+            })
+            ->orderBy('awarded_year','ASC')
+            ->paginate($request->counts)
+            ->withQueryString()
+        );
+        return $data;
     }
 }

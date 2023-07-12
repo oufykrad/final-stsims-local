@@ -18,17 +18,27 @@ class ListExpense extends Model
 
     public function allotments()
     {
-        return $this->hasMany('App\Models\AllotmentList', 'expense_id');
+        return $this->hasMany('App\Models\AccountingAllotmentList', 'expense_id');
     } 
 
     public function disbursements()
     {
-        return $this->hasMany('App\Models\Disbursement', 'expense_id');
+        return $this->hasMany('App\Models\AccountingDisbursement', 'expense_id');
+    } 
+
+    public function add()
+    {
+        return $this->hasMany('App\Models\AccountingRealignment', 'receiver_class');
+    } 
+
+    public function minus()
+    {
+        return $this->hasMany('App\Models\AccountingRealignment', 'sender_class');
     } 
 
     public function balances()
     {
-        return $this->hasMany('App\Models\AllotmentBalance', 'expense_id');
+        return $this->hasMany('App\Models\AccountingBalance', 'expense_id');
     } 
 
     public function getUpdatedAtAttribute($value)

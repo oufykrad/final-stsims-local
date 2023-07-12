@@ -34,5 +34,15 @@ class AppServiceProvider extends ServiceProvider
                 return false;
             }
         });
+
+        \Validator::extend('greater', function ($attribute, $value, $parameters, $validator) {
+            $value = trim(str_replace(',','',$value),'₱ ');
+            if($value != null){
+                if ($value > 0 && $value <= $parameters[0]) {
+                    return true;
+                }
+                return false;
+            }
+        }, 'Funds not enough');
     }
 }

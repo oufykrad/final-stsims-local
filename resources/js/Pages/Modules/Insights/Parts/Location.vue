@@ -3,7 +3,7 @@
         <div class="card-header align-items-center d-flex">
             <h5 class="card-title mb-0 flex-grow-1">Provinces</h5>
             <div>
-                <button class="btn btn-soft-primary btn-sm" type="button">
+                <button @click="view()" class="btn btn-soft-primary btn-sm" type="button">
                     <div class="btn-content"> View all </div>
                 </button>
             </div>
@@ -22,8 +22,8 @@
                 <SimpleBar class="align-items-center d-flex justify-content-center" :style="{ height: height + 'px' }">
                     <table class="table table-centered table-bordered table-nowrap mb-0">
                         <tbody class="fs-11 ">
-                            <tr v-for="(list,index) in locations.provinces" v-bind:key="index">
-                                <td width="40%" class="fw-medium">{{list.province}}</td>
+                            <tr v-for="(list,index) in locations.provinces" v-bind:key="index" :class="(list.region_code == region_code) ? 'text-info' : ''">
+                                <td @click="view(list.code)" style="cursor:pointer;" width="40%" class="fw-medium">{{list.province}}</td>
                                 <td width="15%" class="text-center" v-for="(count,index) in list.count" v-bind:key="index">{{count}} </td>
                                 <td width="15%" class="text-center fw-bold">{{list.total}}</td>
                             </tr>
@@ -50,7 +50,7 @@ import District from '../Modals/District.vue';
 import { SimpleBar } from 'simplebar-vue3';
 export default {
     components: { District, SimpleBar },
-    props: ['locations','total'],
+    props: ['locations','total','region_code'],
     data(){
         return {
             height: window.innerHeight - 557,

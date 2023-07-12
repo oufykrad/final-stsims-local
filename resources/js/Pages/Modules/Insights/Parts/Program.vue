@@ -28,7 +28,6 @@ export default {
             year: new Date().getFullYear(),
             provinces: [],
             province: null,
-            is_undergrad: null,
             series: [],
             chartOptions: {
                 chart: {
@@ -97,7 +96,6 @@ export default {
                 params : {
                     type : 'years',
                     province : this.province,
-                    is_undergrad : this.is_undergrad,
                     year: this.year
                 }
             })

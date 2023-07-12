@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('academic_year',20);
             $table->date('start_at');
             $table->date('end_at');
+            $table->year('year');
             $table->tinyInteger('semester_id')->unsigned()->index();
             $table->foreign('semester_id')->references('id')->on('list_dropdowns')->onDelete('cascade');
             $table->integer('school_id')->unsigned()->index();

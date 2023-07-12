@@ -84,4 +84,15 @@ class ListController extends Controller
         $data = SchoolSemester::with('semester')->where('school_id',$id)->whereYear('start_at', '>=' ,$year)->orderBy('id','DESC')->get();
         return $data;
     }
+
+    public function expenses(Request $request){
+
+        $keyword = $request->input('word');
+        $data = ListExpense::where('name', 'LIKE', '%'.$keyword.'%')
+        ->where('is_active',1)
+        ->get()->take(10);
+
+        return DefaultResource::collection($data);
+    }
+
 }

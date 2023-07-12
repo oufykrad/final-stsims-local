@@ -249,7 +249,42 @@ class SyncController extends Controller
                 curl_close($curl);
                 $datas = json_decode($response);
                 
+                
+                $information = [
+                    'address' => '',
+                    'facebook' => '',
+                    'telephone' => '',
+                    'fax' => '',
+                    'mobile' => '',
+                ];
+
+                $signatories = [
+                    'Approved By' => [
+                        'name' => '',
+                        'position' => ''
+                    ],
+                    'Prepared By' => [
+                        'name' => '',
+                        'position' => ''
+                    ],
+                    'Certified Correct' => [
+                        'name' => '',
+                        'position' => ''
+                    ],
+                    'Reviewed By' => [
+                        'name' => '',
+                        'position' => ''
+                    ],
+                    'Verified Correct' => [
+                        'name' => '',
+                        'position' => ''
+                    ],
+                ];
+                
+
                 $data = new Setting;
+                $data->information = json_encode($information);
+                $data->signatories = json_encode($signatories);
                 $data->agency_id = $datas;
                 $data->save();
     

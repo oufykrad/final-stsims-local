@@ -39,7 +39,6 @@
                         <tr v-for="list in lists" v-bind:key="list.id">
                             <td width="40%">
                                 <h5 class="fs-14 mb-0 text-dark">{{list.name}}</h5>
-                                <p class="fs-12 text-muted mb-0">{{list.program}}</p>
                             </td>
                             <td width="40%" class="text-center">{{list.account_no}}</td>
                             <td width="15%" class="text-center"> ₱{{ formatMoney(list.total) }}</td>
@@ -60,16 +59,16 @@
             </div>
         </div>
     </b-row>
-    <Confirm ref="confirm"/>
+    <Release ref="release"/>
     <View ref="view"/>
     <!-- <Release ref="release"/> -->
 </template>
 <script>
 import View from '../Modals/View.vue';
-import Confirm from '../Modals/Confirm.vue';
+import Release from '../Modals/Release.vue';
 import { SimpleBar } from 'simplebar-vue3';
 export default {
-    components : { SimpleBar, Confirm, View },
+    components : { SimpleBar, Release, View },
     data(){
         return {
             currentUrl: window.location.origin,
@@ -101,7 +100,7 @@ export default {
         },
 
         release(){
-            this.$refs.confirm.set(this.lists,this.info);
+            this.$refs.release.set(this.lists,this.info);
         },
 
         formatMoney(value) {

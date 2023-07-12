@@ -14,11 +14,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware(['auth:sanctum'])->group(function () {
-    Route::get('/scholars/{code}', [App\Http\Controllers\ScholarController::class, 'api']);
-    Route::get('/courses', [App\Http\Controllers\CourseController::class, 'api']);
-});
-
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });

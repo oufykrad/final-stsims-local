@@ -5,16 +5,20 @@ namespace App\Http\Controllers\Scholar;
 use App\Models\User;
 use App\Models\Scholar;
 use App\Models\Release;
+use App\Models\ListPrivilege;
 use App\Models\ScholarBenefit;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Resources\NameResource;
 use App\Http\Requests\ReleaseRequest;
+use App\Http\Traits\UploadTrait;
 use App\Http\Resources\Scholars\Benefits\ListResource;
 use App\Http\Resources\Scholars\Benefits\ReleaseResource;
 
 class FinancialBenefitController extends Controller
 {
+    use UploadTrait;
+
     public function index(Request $request){
         $type = $request->type;
         switch($type){
@@ -134,10 +138,12 @@ class FinancialBenefitController extends Controller
     public function edit($id){
         $data = Release::where('id',$id)->first();
         $user = User::with('profile')->where('role','Scholarship Coordinator')->where('is_active',1)->first();
-
+        $lists = ScholarBenefit::where('release_id',$id)->pluck('benefit_id');
+        $lists = ListPrivilege::whereIn('id',$lists)->pluck('name');
         $array = [
             'benefits' => new ReleaseResource($data),
-            'user' => $user
+            'user' => $user,
+            'lists' => $lists
         ];
 
         $pdf = \PDF::loadView('prints2.fb',$array)->setPaper('a4', 'portrait');

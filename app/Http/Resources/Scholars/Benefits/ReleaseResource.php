@@ -14,7 +14,7 @@ class ReleaseResource extends JsonResource
         $scholars = ScholarBenefit::select('scholar_id')->where('release_id',$this->id)->groupBy('scholar_id')->pluck('scholar_id');
         $lists = Scholar::with('profile')->with('benefits.benefit')
         ->withWhereHas('benefits', function ($query) use ($scholars) {
-            $query->where('release_id',$this->id);
+            $query->with('semester.semester')->with('semester.benefits')->where('release_id',$this->id);
         })
         ->whereIn('id',$scholars)
         ->get()

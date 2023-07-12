@@ -23,7 +23,7 @@ return new class extends Migration
             $table->bigInteger('added_by')->unsigned()->index();
             $table->foreign('added_by')->references('id')->on('users')->onDelete('cascade');
             $table->tinyInteger('status_id')->unsigned()->index();
-            $table->foreign('status_id')->references('id')->on('list_dropdowns')->onDelete('cascade');
+            $table->foreign('status_id')->references('id')->on('list_statuses')->onDelete('cascade');
             $table->timestamps();
         });
     }

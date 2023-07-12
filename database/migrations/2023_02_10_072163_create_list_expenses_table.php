@@ -18,6 +18,7 @@ return new class extends Migration
             $table->tinyIncrements('id');
             $table->string('name');
             $table->string('code',20)->default('n/a');
+            $table->decimal('amount',12,2)->default(0);
             $table->tinyInteger('expenditure_id')->unsigned()->index();
             $table->foreign('expenditure_id')->references('id')->on('list_dropdowns')->onDelete('cascade');
             $table->boolean('is_active')->default(1);
