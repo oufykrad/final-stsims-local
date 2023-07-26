@@ -115,15 +115,7 @@ export default {
         },
         prospec(){
             this.p = this.prospec;
-        },
-        datares: {
-            deep: true,
-            handler(val = null) {
-                if(val != null && val !== ''){
-                    this.message(val.data);
-                }
-            },
-        },
+        }
     },
 
     computed : {
@@ -138,10 +130,7 @@ export default {
                 });
             }
             return sum
-        },
-        datares() {
-            return this.$page.props.flash.datares;
-        },
+        }
     },
 
     created(){
@@ -219,12 +208,6 @@ export default {
                     this.$refs.swtch.set(this.subjects,selected,this.user);
                 break;
             }
-        },
-
-        message(list){
-            this.prospec = list.information;
-            this.subjects = [];
-            this.onChange();
         },
 
         addsubject(list){

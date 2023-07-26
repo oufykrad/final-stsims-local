@@ -67,7 +67,7 @@ export default {
     },
     computed: {
         bal: function(){
-            return (this.disbursement.expense.balance) ? this.disbursement.expense.balance : 0
+            return (this.disbursement.expense.amount) ? this.disbursement.expense.amount : 0
         }
     },  
     methods: {
@@ -81,7 +81,7 @@ export default {
             this.form = this.$inertia.form({
                 amount: this.disbursement.amount,
                 expense_id: (this.disbursement.expense) ? this.disbursement.expense.id : '',
-                allowed: (this.disbursement.expense) ? this.disbursement.expense.balance : '',
+                allowed: (this.disbursement.expense) ? this.disbursement.expense.amount : '',
                 remarks: (this.disbursement.remarks) ? this.disbursement.remarks : 'n/a',
                 type: 'disbursement'
             })

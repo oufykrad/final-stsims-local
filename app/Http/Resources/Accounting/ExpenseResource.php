@@ -17,7 +17,7 @@ class ExpenseResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'code' => $this->code,
-            'balance' => $this->balance,
+            'balance' => $this->amount,
             'expenditure' => $this->expenditure,
             'is_active' => $this->is_active,
             'total' => $allotment + $add - $minus,

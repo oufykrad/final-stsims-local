@@ -40,8 +40,8 @@ class HandleInertiaRequests extends Middleware
         }
 
         $settings = Setting::with('agency.region')->first();
-        $region_code = $settings->agency->region_code;
-        $semester_year = $settings->year;
+        $region_code = ($settings)? $settings->agency->region_code : NULL;
+        $semester_year = ($settings)? $settings->year : NULL;
  
         return array_merge(parent::share($request), [
             'auth' => (\Auth::check()) ? new UserResource(\Auth::user()) : '',
@@ -60,7 +60,7 @@ class HandleInertiaRequests extends Middleware
             'agencies' => ListAgency::all(),
             'region_code' => $region_code,
             'semester_year' => $semester_year,
-            'settings' => new SettingResource($settings)
+            'settings' => ($settings) ? new SettingResource($settings) : null
         ]);
     }
 }

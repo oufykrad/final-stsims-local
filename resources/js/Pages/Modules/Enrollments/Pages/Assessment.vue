@@ -50,32 +50,18 @@
                         </tbody>
                     </table>
                 </SimpleBar>
-                    <table class="table table-centered table-bordered table-nowrap mt-n3 mb-0">
-                        <tfoot class="thead-light">
-                            <tr class="font-size-12">
-                                <th style="width: 80%;" colspan="3"></th>
-                                <th class="text-center text-primary" style="width: 10%;">{{ units }}</th>
-                                <th class="text-center text-primary" style="width: 10%;">{{ total }}</th>
-                            </tr>
-                        </tfoot>
-                    </table>
+                <table class="table table-centered table-bordered table-nowrap mt-n3 mb-0">
+                    <tfoot class="thead-light">
+                        <tr class="font-size-12">
+                            <th style="width: 80%;" colspan="3"></th>
+                            <th class="text-center text-primary" style="width: 10%;">{{ units }}</th>
+                            <th class="text-center text-primary" style="width: 10%;">{{ total }}</th>
+                        </tr>
+                    </tfoot>
+                </table>
             </div>
         </div>
     </div>
-    <!-- <b-row class="mb-3 mt-3">
-        <div class="col-md-6">
-            <input v-if="selected.is_locked == 0" multiple ref="fileupload" type="file" @change="uploadFieldChange" class="form-control " :class="[($page.props.errors['files.'+0]) ? 'text-danger' : '']" style="width: 300px;" id="formFileSm"/>          
-        </div>
-        <div class="col-md-6">
-            <div class="hstack float-end gap-2 mt-4 mt-sm-0">
-                <a v-if="selected.is_locked == 1" href="javascript: void(0);" class="text-dark fw-medium"><i class="mdi mdi-file-document font-size-16 align-middle text-primary"></i> index.html</a>
-                <b-button v-if="selected.is_locked == 0" @click="save" type="button" class="w-lg float-end me-0" variant="primary">Save</b-button>
-                <b-button v-if="selected.is_locked == 0" @click="locked(selected.id)" :disabled="!selected.is_clear" type="button" class="float-end" variant="primary">
-                    <i class="bx bxs-lock-alt "></i>
-                </b-button>
-            </div>
-        </div>
-    </b-row> -->
     <Lock :lists="lists" @status="message" ref="lock"/>
     <Confirm ref="confirm"/>
 </template>
@@ -101,7 +87,7 @@ export default {
             handler(val = null) {
                 if(val != null && val !== ''){
                     this.message(val.data);
-                    // console.log(val)
+                    console.log('haha');
                 }
             },
         },

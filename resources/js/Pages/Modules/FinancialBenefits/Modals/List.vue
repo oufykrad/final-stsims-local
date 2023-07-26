@@ -3,11 +3,11 @@
         <b-form class="customform mb-2" v-if="selected">
             <div class="row">
                 <div class="col-md-12">
-                    <b-row v-if="!show" class="mb-4 mt-4">
+                    <b-row v-if="!show" class="mb-4 mt-2">
                         <div class="responsive">
                             <table class="table table-centered table-bordered table-nowrap">
                                 <thead class="thead-light align-middle text-center">
-                                    <tr class="fw-bold fs-13 text-primary">
+                                    <tr class="table-light fw-bold fs-13 text-primary">
                                         <td colspan="2">{{selected.month.toUpperCase() }} BATCH {{selected.batch}} <span class="fs-12 fw-medium text-muted">({{selected.created_at}})</span></td>
                                     </tr>
                                     <tr class="fw-bold font-size-11">
@@ -34,7 +34,7 @@
                                     </tr>
                                 </thead>
                             </table>
-                            <SimpleBar class="align-items-center d-flex justify-content-center" :style="{ height: height + 'px' }">
+                            <SimpleBar class="align-items-center d-flex justify-content-center" :style="{ 'max-height': height + 'px' }">
                                 <table class="table table-centered table-bordered table-nowrap mb-0">
                                     <tbody >
                                         <tr v-for="l in selected.lists" v-bind:key="l.id" style="cursor: pointer;" @click="view(l)">
@@ -47,16 +47,16 @@
                             </SimpleBar>
                         </div>
                     </b-row>
-                    <b-row v-else class="mb-4 mt-4">
+                    <b-row v-else class="mb-4 mt-2">
                         <div class="responsive">
                             <table class="table table-centered table-bordered table-nowrap">
-                                <thead class="thead-light align-middle text-center">
-                                    <tr class="fw-bold font-size-11">
+                                <thead class="table-light align-middle text-center">
+                                    <tr class="fw-bold fs-11">
                                         <td>Name</td>
                                         <td>Total</td>
                                     </tr>
                                 </thead>
-                                <tbody class="align-middle text-center">
+                                <tbody class="align-middle fw-semibold text-center">
                                     <tr>
                                         <td width="50%">{{breakdown.name}} </td>
                                         <td width="50%">₱ {{ formatMoney(breakdown.total)}}</td>
@@ -67,22 +67,39 @@
                                 <thead class="table-dark">
                                     <tr class="fs-11">
                                         <th class="text-center" width="15%">Semester</th>
-                                        <th v-for="(l,index) in headers" v-bind:key="index" :width="70/semesters.length+'%'" class="text-center">{{l}}</th>
+                                        <th v-for="(l,index) in headers" v-bind:key="index" :width="70/headers.length+'%'" class="text-center">{{l}}</th>
                                         <th class="text-center" width="15%">Total</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr class="fs-11" v-for="(s,index) in semesters" v-bind:key="index">
-                                        <td class="text-center">{{semesters[index].academic_year}} - {{semesters[index].semester.name}}</td>
-                                        <td v-for="(l,index) in headers" v-bind:key="index" class="text-center">
-                                            ₱ {{calculate(l,s.id)}}
-                                        </td>
-                                        <td class="text-center"> ₱ {{calculate('Total',s.id)}}</td>
-                                    </tr>
+                                    <template v-for="(s,index) in semesters" v-bind:key="index">
+                                        <tr class="fs-11" v-if="(counts[index] != 0) ? true : false">
+                                            <td>{{semesters[index].academic_year}} - {{semesters[index].semester.name}}</td>
+                                            <td v-for="(l,index) in headers" v-bind:key="index" class="text-center">
+                                                ₱ {{calculate(l,s.id)}}
+                                            </td>
+                                            <td class="text-center"> 
+                                                ₱ {{calculate('Total',s.id)}}
+                                            </td>
+                                        </tr>
+                                    </template>
                                 </tbody>
+                                <thead>
+                                    <tr class="table-light fs-11 fw-semibold">
+                                        <td>Total</td>
+                                        <td v-for="(l,index) in headers" v-bind:key="index" class="text-center">
+                                            ₱ {{formatMoney(check(l))}}
+                                        </td>
+                                        <td class="text-center text-primary">₱ {{formatMoney(breakdown.total)}}</td>
+                                    </tr>
+                                </thead>
                             </table>
                         </div>
                     </b-row>
+                    <button class="btn btn-light float-end" type="button">
+                        <div v-if="show" @click="back()" class="btn-content"> Back </div>
+                        <div v-else @click="showModal = false" class="btn-content"> Close </div>
+                    </button>
                 </div>
             </div>
         </b-form>
@@ -105,6 +122,7 @@ export default {
             headers: [],
             semesters: [],
             totals: [],
+            counts: []
         }
     },
 
@@ -116,6 +134,7 @@ export default {
             this.show = false;
             this.selected = data;
             this.showModal = true;
+            this.counts = [];
         },
         formatMoney(value) {
             let val = (value/1).toFixed(2).replace(',', '.')
@@ -124,14 +143,16 @@ export default {
         view(data){
             this.breakdown = data;
             this.breakdown.benefits.map((list) => {
-                if (!this.headers.includes(list.benefit.name)) {
-                    this.headers.push(list.benefit.name);
+                if (!this.headers.includes(list.benefit.short)) {
+                    this.headers.push(list.benefit.short);
                 }
             });
-            this.breakdown.benefits.map((list) => {
+            this.breakdown.enrollments.map((list) => {
                 if (!this.semesters.some(item => item.id === list.semester.id)) {
                     this.semesters.push(list.semester);
                 }
+                var benefitsLength = this.breakdown.benefits.filter((item) => item.school_semester_id == list.semester.id);
+                this.counts.push(benefitsLength.length);
             });
             this.show = true;
         },
@@ -139,8 +160,8 @@ export default {
             if(data != 'Total'){
                 var total = 0;
                 this.breakdown.benefits.map((list) => {
-                    if(list.benefit.name == data) {
-                        if(list.semester.id == semester){
+                    if(list.benefit.short == data) {
+                        if(list.school_semester_id == semester){
                             total = parseInt(total) + parseInt(list.amount);
                         }
                     }
@@ -153,8 +174,21 @@ export default {
                 return t;
             };
         },
+        check(l){
+            var total = 0;
+            this.breakdown.benefits.map((list) => {
+                if(list.benefit.short == l) {
+                    total = parseInt(total) + parseInt(list.amount);
+                }
+            });
+            return total;
+        },
         back(){
-
+            this.headers = [];
+            this.semesters = [];
+            this.totals = [];
+            this.counts = [];
+            this.show = false;
         }
     }
 }

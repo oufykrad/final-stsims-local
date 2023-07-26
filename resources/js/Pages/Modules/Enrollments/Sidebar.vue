@@ -88,11 +88,13 @@ import Course from './Modals/Course.vue';
 import { SimpleBar } from "simplebar-vue3";
 export default {
     components : { SimpleBar, Course},
+    props: ['show'],
     data(){
         return {
             currentUrl: window.location.origin,
             names: [],
             scholar: null,
+            show: ''
         }
     },
     mounted() {
@@ -141,7 +143,9 @@ export default {
                 );
                 this.show = 'course';
             }else{
-                this.viewProspectus();
+                if(this.show != 'enroll'){
+                    this.viewProspectus();
+                }
             }
         },
         fetchLists(list){
@@ -151,10 +155,20 @@ export default {
             this.$parent.prospectus('prospectus',this.scholar.education.info);
         },
         viewEnroll(){
-           this.$parent.enroll('enroll',this.scholar);
+            this.show = 'enroll';
+            this.$parent.enroll('enroll',this.scholar);
         },
         message(list) {
-            this.choose(list);
+            switch(this.show){
+                case 'enroll':
+                    this.choose(list);
+                    this.fetchLists(this.scholar.enrollments[0]);
+                    this.show = 'assessment';
+                break;
+                case 'course':
+                    this.choose(list);
+                break;
+            }
         },
         isCustomDropdown() {
             var searchOptions = document.getElementById("search-close-options");

@@ -46,10 +46,10 @@
                                 <tr class="font-size-11" v-for="(course,index) in semester.courses" v-bind:key="index">
                                     <td width="15%" class="text-center fw-bold fs-11">{{course.code}}</td>
                                     <td width="70%" class="text-center text-muted fs-11">{{course.subject}}</td>
-                                    <td class="text-center fw-bold" width="15%" v-if="!course.hasOwnProperty('grades')">
+                                    <td class="text-center fw-bold fs-11" width="15%" v-if="!course.hasOwnProperty('grades')">
                                         {{ course.grade}}
                                     </td>
-                                    <td class="text-center fw-bold" width="15%" v-else>
+                                    <td class="text-center fw-bold fs-11" width="15%" v-else>
                                         <span :class="(grade > 3 || grade == 'F') ? 'text-danger' : 'text-dark'" v-for="(grade,index) in course.grades" v-bind:key="index">
                                             <span class="text-muted" v-if="course.grades.length > 1 && index != 0"> / </span> {{grade}} 
                                         </span>

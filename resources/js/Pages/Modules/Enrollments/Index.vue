@@ -1,10 +1,9 @@
 <template>
-
     <Head title="Scholars" />
     <PageHeader :title="title" :items="items" />
     <div class="chat-wrapper d-lg-flex gap-1 mx-n4 mt-n4 p-1">
         <div class="file-manager-sidebar">
-            <Sidebar @info="set()"/>
+            <Sidebar :show="show" @info="set()"/>
         </div>
         <div class="file-manager-content w-100 p-4 pb-0" style="height: calc(100vh - 180px)" ref="box">
             <Assessment v-if="show == 'assessment'" :lists="lists" :selected="selected" :user="scholar.code" @status="message" ref="assessment"/>
@@ -82,9 +81,6 @@ export default {
                         this.scholar.education.school.is_enrolled = true;
                     }
                 break;
-                // case 'lists': 
-                //     console.log(list);
-                // break;
                 default:
                     this.selected = list;
                     index = this.scholar.enrollments.findIndex(u => u.id === list.id);

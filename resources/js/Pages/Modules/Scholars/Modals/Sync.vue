@@ -43,7 +43,7 @@
                                         </div>
                                     </div>
                 
-                                    <div class="mt-4" v-if="!isLoading">
+                                    <div class="mt-4" v-if="!hide2">
                                         <button @click="sync" type="button"  class="btn btn-primary w-lg">Download</button>
                                     </div>
                                 </form>
@@ -69,10 +69,12 @@ export default {
             duplicate: [],
             isLoading: false,
             result: false,
+            hide2: false
         }
     },
     methods : {
         show(){
+            this.hide2 = false;
             this.showModal = true;
         },
         uploadFieldChange(e) {
@@ -82,6 +84,7 @@ export default {
         },
         sync(){
             this.isLoading = true;
+            this.hide2 = true;
             axios.get(this.currentUrl + '/sync/scholars')
             .then(response => {
                 this.isLoading = false;

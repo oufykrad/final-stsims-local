@@ -73,6 +73,7 @@ trait EnrollmentTrait {
             $list_benefits = ListPrivilege::where('is_reimburseable',0)->get();
             $type = ScholarEducation::with('school.term')->where('scholar_id',$scholar_id[0])->first();
             $type = $type->school->term->name;
+            $others = $data->semester->semester->others;
 
             switch($type){
                 case 'Semester': 
@@ -88,10 +89,16 @@ trait EnrollmentTrait {
     
             foreach($list_benefits as $benefit){
                 $attachment = [];
+                $amount = ($others != 'summer') ? $benefit['regular_amount'] : $benefit['summer_amount'];
+                if($others != 'summer'){
+                    $total = $amount / (($benefit['type'] == 'Term') ? $div : 1);
+                }else{
+                    $total = $amount;
+                }
                 $wew = [
                     'benefit_id' => $benefit['id'],
                     'scholar_id' => $scholar_id[0],
-                    'amount' => $benefit['regular_amount'] / (($benefit['type'] == 'Term') ? $div : 1),
+                    'amount' => $total,
                     'release_type' => 'Full',
                     'month' => $month,
                     'status_id' => 11,
@@ -100,7 +107,8 @@ trait EnrollmentTrait {
                 ];
     
                 if($benefit['id'] == 1){
-                    for($x = 0; $x < 5; $x++){
+                    $number = ($others != 'summer') ? 5 : 2; 
+                    for($x = 0; $x < $number; $x++){
                         $list = ScholarBenefit::create($wew);
                         $wew['month'] = date('Y-m-d', strtotime($wew['month']. ' + 1 months'));
                     }

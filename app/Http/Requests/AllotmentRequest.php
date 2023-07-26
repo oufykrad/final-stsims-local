@@ -40,6 +40,9 @@ class AllotmentRequest extends FormRequest
             case 'realignment':
                 return [];
             break;
+            case 'expense':
+                return [];
+            break;
         }
     }
 }

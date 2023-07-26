@@ -37,7 +37,7 @@ class EnrollmentController extends Controller
 
         $data = Scholar::with('profile')
         ->with('program:id,name','subprogram:id,name','category:id,name','status:id,name,type,color,others')
-        ->with('education.school.school','education.course','education.level')
+        ->with('education.school.school','education.school.semesters','education.course','education.level')
         ->with('enrollments')
         ->whereHas('status',function ($query){
             $query->where('type','Ongoing');
@@ -56,13 +56,13 @@ class EnrollmentController extends Controller
         $data = \DB::transaction(function () use ($request){
             switch($request->type){
                 case 'save': 
-                    return $this->save($request);
+                    return new SearchResource($this->save($request));
                 break;
                 case 'grade': 
-                    return $this->saveGrade($request);
+                    return new EnrollmentResource($this->saveGrade($request));
                 break;
                 case 'lock': 
-                    return $this->lockGrade($request);
+                    return new EnrollmentResource($this->lockGrade($request));
                 break;
             }
         });
@@ -81,7 +81,7 @@ class EnrollmentController extends Controller
 
         return back()->with([
             'message' => $message,
-            'data' =>  new EnrollmentResource($data),
+            'data' =>  $data,
             'type' => 'bxs-check-circle'
         ]); 
     }
@@ -100,7 +100,16 @@ class EnrollmentController extends Controller
         $data = ScholarEnrollment::create(array_merge($request->all(),['scholar_id' => $scholar_id[0],'attachment' => json_encode($attachments), 'added_by' => \Auth::user()->id]));
         $this->level($request);
         $this->createList($data->id,$request);
-        $data = ScholarEnrollment::find($data->id);
+        // $data = ScholarEnrollment::find($data->id);
+
+        $data = Scholar::with('profile')
+        ->with('program:id,name','subprogram:id,name','category:id,name','status:id,name,type,color,others')
+        ->with('education.school.school','education.school.semesters','education.course','education.level')
+        ->with('enrollments')
+        ->whereHas('status',function ($query){
+            $query->where('type','Ongoing');
+        })
+        ->where('id',$scholar_id[0])->first();
         return $data;
     }
 

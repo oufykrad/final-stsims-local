@@ -128,7 +128,7 @@ class AccountingController extends Controller
                 $data = AccountingAllotmentList::create(array_merge($request->all(),['added_by' => \Auth::user()->id]));
                 if($data){
                     $expense = ListExpense::where('id',$request->expense_id)->first();
-                    $expense->balance = $expense->balance + trim(str_replace(',','',$request->amount),'₱ ');
+                    $expense->amount = $expense->amount + trim(str_replace(',','',$request->amount),'₱ ');
                     $expense->save();
 
                     if($expense){
@@ -138,10 +138,10 @@ class AccountingController extends Controller
                         if($report){
                             $balance = AccountingBalance::where('report_id',$report->id)->where('expense_id',$request->expense_id)->first();
                             if($balance != null){
-                                $balance->amount = $balance->balance + trim(str_replace(',','',$request->amount),'₱ ');
+                                $balance->amount = $balance->amount + trim(str_replace(',','',$request->amount),'₱ ');
                             }else{
                                 $balance = new AccountingBalance;
-                                $balance->amount = $expense->balance;
+                                $balance->amount = $expense->amount;
                                 $balance->report_id = $report->id;
                                 $balance->expense_id = $request->expense_id;
                                 $balance->save();
@@ -234,7 +234,7 @@ class AccountingController extends Controller
                 $data = AccountingDisbursement::create(array_merge($request->all(),['added_by' => \Auth::user()->id, 'report_id' => $this->report_id]));
                 if($data){
                     $expense = ListExpense::where('id',$request->expense_id)->first();
-                    $expense->balance = $expense->balance - trim(str_replace(',','',$request->amount),'₱ ');
+                    $expense->amount = $expense->amount - trim(str_replace(',','',$request->amount),'₱ ');
                     $expense->save();
 
                     if($expense){
@@ -249,7 +249,7 @@ class AccountingController extends Controller
                                 $balance->save();
                             }else{
                                 $balance = new AccountingBalance;
-                                $balance->amount = $expense->balance;
+                                $balance->amount = $expense->amount;
                                 $balance->report_id = $report->id;
                                 $balance->expense_id = $request->receiver_class;
                                 $balance->save();
@@ -338,7 +338,7 @@ class AccountingController extends Controller
     }
 
     public function balances($report_id){
-        $expenses = ListExpense::where('balance','!=',0)->get();
+        $expenses = ListExpense::where('amount','!=',0)->get();
         foreach($expenses as $expense){
             $check = AccountingBalance::where('report_id',$report_id)->where('expense_id',$expense->id)->count();
             if($check == 0){

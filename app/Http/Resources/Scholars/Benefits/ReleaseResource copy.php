@@ -12,9 +12,9 @@ class ReleaseResource extends JsonResource
     public function toArray($request)
     {
         $scholars = ScholarBenefit::select('scholar_id')->where('release_id',$this->id)->groupBy('scholar_id')->pluck('scholar_id');
-        $lists = Scholar::with('profile','program')->with('benefits.benefit')->with('enrollments.semester.semester')
-        ->withWhereHas('benefits', function ($query) {
-            $query->where('release_id',$this->id);
+        $lists = Scholar::with('profile')->with('benefits.benefit')
+        ->withWhereHas('benefits', function ($query) use ($scholars) {
+            $query->with('semester.semester')->with('semester.benefits')->where('release_id',$this->id);
         })
         ->whereIn('id',$scholars)
         ->get()

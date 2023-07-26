@@ -975,7 +975,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   computed: {
     bal: function bal() {
-      return this.disbursement.expense.balance ? this.disbursement.expense.balance : 0;
+      return this.disbursement.expense.amount ? this.disbursement.expense.amount : 0;
     }
   },
   methods: {
@@ -990,7 +990,7 @@ __webpack_require__.r(__webpack_exports__);
       this.form = this.$inertia.form({
         amount: this.disbursement.amount,
         expense_id: this.disbursement.expense ? this.disbursement.expense.id : '',
-        allowed: this.disbursement.expense ? this.disbursement.expense.balance : '',
+        allowed: this.disbursement.expense ? this.disbursement.expense.amount : '',
         remarks: this.disbursement.remarks ? this.disbursement.remarks : 'n/a',
         type: 'disbursement'
       });
@@ -1729,9 +1729,6 @@ __webpack_require__.r(__webpack_exports__);
             this.scholar.education.school.is_enrolled = true;
           }
           break;
-        // case 'lists': 
-        //     console.log(list);
-        // break;
         default:
           this.selected = list;
           index = this.scholar.enrollments.findIndex(function (u) {
@@ -2295,12 +2292,11 @@ __webpack_require__.r(__webpack_exports__);
         var val = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
         if (val != null && val !== '') {
           this.message(val.data);
-          // console.log(val)
+          console.log('haha');
         }
       }
     }
   },
-
   computed: {
     units: function units() {
       var sum = 0;
@@ -2463,15 +2459,6 @@ __webpack_require__.r(__webpack_exports__);
     },
     prospec: function prospec() {
       this.p = this.prospec;
-    },
-    datares: {
-      deep: true,
-      handler: function handler() {
-        var val = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-        if (val != null && val !== '') {
-          this.message(val.data);
-        }
-      }
     }
   },
   computed: {
@@ -2488,9 +2475,6 @@ __webpack_require__.r(__webpack_exports__);
         });
       }
       return sum;
-    },
-    datares: function datares() {
-      return this.$page.props.flash.datares;
     }
   },
   created: function created() {
@@ -2573,11 +2557,6 @@ __webpack_require__.r(__webpack_exports__);
           break;
       }
     },
-    message: function message(list) {
-      this.prospec = list.information;
-      this.subjects = [];
-      this.onChange();
-    },
     addsubject: function addsubject(list) {
       this.lists.push(list);
     },
@@ -2652,11 +2631,13 @@ __webpack_require__.r(__webpack_exports__);
     SimpleBar: simplebar_vue3__WEBPACK_IMPORTED_MODULE_1__.SimpleBar,
     Course: _Modals_Course_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
   },
+  props: ['show'],
   data: function data() {
     return {
       currentUrl: window.location.origin,
       names: [],
-      scholar: null
+      scholar: null,
+      show: ''
     };
   },
   mounted: function mounted() {
@@ -2704,7 +2685,9 @@ __webpack_require__.r(__webpack_exports__);
         this.$refs.course.set(this.scholar.id, this.scholar.profile, this.scholar.education.school, this.scholar.education.course);
         this.show = 'course';
       } else {
-        this.viewProspectus();
+        if (this.show != 'enroll') {
+          this.viewProspectus();
+        }
       }
     },
     fetchLists: function fetchLists(list) {
@@ -2714,10 +2697,20 @@ __webpack_require__.r(__webpack_exports__);
       this.$parent.prospectus('prospectus', this.scholar.education.info);
     },
     viewEnroll: function viewEnroll() {
+      this.show = 'enroll';
       this.$parent.enroll('enroll', this.scholar);
     },
     message: function message(list) {
-      this.choose(list);
+      switch (this.show) {
+        case 'enroll':
+          this.choose(list);
+          this.fetchLists(this.scholar.enrollments[0]);
+          this.show = 'assessment';
+          break;
+        case 'course':
+          this.choose(list);
+          break;
+      }
     },
     isCustomDropdown: function isCustomDropdown() {
       var _this2 = this;
@@ -2988,7 +2981,8 @@ __webpack_require__.r(__webpack_exports__);
       show: false,
       headers: [],
       semesters: [],
-      totals: []
+      totals: [],
+      counts: []
     };
   },
   methods: {
@@ -2999,6 +2993,7 @@ __webpack_require__.r(__webpack_exports__);
       this.show = false;
       this.selected = data;
       this.showModal = true;
+      this.counts = [];
     },
     formatMoney: function formatMoney(value) {
       var val = (value / 1).toFixed(2).replace(',', '.');
@@ -3008,16 +3003,20 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
       this.breakdown = data;
       this.breakdown.benefits.map(function (list) {
-        if (!_this.headers.includes(list.benefit.name)) {
-          _this.headers.push(list.benefit.name);
+        if (!_this.headers.includes(list.benefit["short"])) {
+          _this.headers.push(list.benefit["short"]);
         }
       });
-      this.breakdown.benefits.map(function (list) {
+      this.breakdown.enrollments.map(function (list) {
         if (!_this.semesters.some(function (item) {
           return item.id === list.semester.id;
         })) {
           _this.semesters.push(list.semester);
         }
+        var benefitsLength = _this.breakdown.benefits.filter(function (item) {
+          return item.school_semester_id == list.semester.id;
+        });
+        _this.counts.push(benefitsLength.length);
       });
       this.show = true;
     },
@@ -3025,8 +3024,8 @@ __webpack_require__.r(__webpack_exports__);
       if (data != 'Total') {
         var total = 0;
         this.breakdown.benefits.map(function (list) {
-          if (list.benefit.name == data) {
-            if (list.semester.id == semester) {
+          if (list.benefit["short"] == data) {
+            if (list.school_semester_id == semester) {
               total = parseInt(total) + parseInt(list.amount);
             }
           }
@@ -3042,7 +3041,22 @@ __webpack_require__.r(__webpack_exports__);
       }
       ;
     },
-    back: function back() {}
+    check: function check(l) {
+      var total = 0;
+      this.breakdown.benefits.map(function (list) {
+        if (list.benefit["short"] == l) {
+          total = parseInt(total) + parseInt(list.amount);
+        }
+      });
+      return total;
+    },
+    back: function back() {
+      this.headers = [];
+      this.semesters = [];
+      this.totals = [];
+      this.counts = [];
+      this.show = false;
+    }
   }
 });
 
@@ -3298,19 +3312,103 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
+      currentUrl: window.location.origin,
       showModal: false,
-      selected: ''
+      selected: '',
+      attachment: [],
+      height: window.innerHeight - 557,
+      breakdown: '',
+      show: false,
+      headers: [],
+      semesters: [],
+      totals: [],
+      sums: [],
+      counts: []
     };
   },
   methods: {
     set: function set(data) {
-      console.log(data);
+      var _this = this;
+      this.headers = [];
+      this.sums = [];
+      this.semesters = [];
+      this.totals = [];
+      this.show = false;
       this.selected = data;
       this.showModal = true;
+      this.counts = [];
+      this.breakdown = data;
+      console.log(data);
+      this.breakdown.benefits.map(function (list) {
+        if (!_this.headers.includes(list.benefit["short"])) {
+          _this.headers.push(list.benefit["short"]);
+        }
+      });
+      this.breakdown.enrollments.map(function (list) {
+        if (!_this.semesters.some(function (item) {
+          return item.id === list.semester.id;
+        })) {
+          _this.semesters.push(list.semester);
+        }
+        var benefitsLength = _this.breakdown.benefits.filter(function (item) {
+          return item.school_semester_id == list.semester.id;
+        });
+        _this.counts.push(benefitsLength.length);
+      });
     },
     formatMoney: function formatMoney(value) {
       var val = (value / 1).toFixed(2).replace(',', '.');
       return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    },
+    calculate: function calculate(data, semester) {
+      // if(data != 'Total'){
+      //     var total = 0;
+      //     this.breakdown.enrollments.map((list) => {
+      //         if(list.semester.id == semester){
+      //             list.semester.benefits.map((list) => {
+      //                 if(list.benefit.name == data) {
+      //                     total = parseInt(total) + parseInt(list.amount);
+      //                 }
+      //             });
+      //         }
+      //     });
+      //     this.totals.push(total);
+      //     return this.formatMoney(total);
+      // }else{
+      //     let t = this.formatMoney(this.totals.reduce((a, b) => a + b, 0));
+      //     this.totals = [];
+      //     return t;
+      // };
+
+      if (data != 'Total') {
+        var total = 0;
+        this.breakdown.benefits.map(function (list) {
+          if (list.benefit["short"] == data) {
+            if (list.school_semester_id == semester) {
+              total = parseInt(total) + parseInt(list.amount);
+            }
+          }
+        });
+        this.totals.push(total);
+        return this.formatMoney(total);
+      } else {
+        var t = this.formatMoney(this.totals.reduce(function (a, b) {
+          return a + b;
+        }, 0));
+        this.totals = [];
+        return t;
+      }
+      ;
+      return 0;
+    },
+    check: function check(l) {
+      var total = 0;
+      this.breakdown.benefits.map(function (list) {
+        if (list.benefit["short"] == l) {
+          total = parseInt(total) + parseInt(list.amount);
+        }
+      });
+      return total;
     }
   }
 });
@@ -5089,11 +5187,13 @@ __webpack_require__.r(__webpack_exports__);
       failed: [],
       duplicate: [],
       isLoading: false,
-      result: false
+      result: false,
+      hide2: false
     };
   },
   methods: {
     show: function show() {
+      this.hide2 = false;
       this.showModal = true;
     },
     uploadFieldChange: function uploadFieldChange(e) {
@@ -5104,6 +5204,7 @@ __webpack_require__.r(__webpack_exports__);
     sync: function sync() {
       var _this = this;
       this.isLoading = true;
+      this.hide2 = true;
       axios.get(this.currentUrl + '/sync/scholars').then(function (response) {
         _this.isLoading = false;
         _this.result = true;
@@ -5948,7 +6049,7 @@ __webpack_require__.r(__webpack_exports__);
       this.showModal = false;
     },
     disabledBeforeTodayAndAfterAWeek: function disabledBeforeTodayAndAfterAWeek(date) {
-      return date < new Date('2020/12/31');
+      // return date < new Date('2020/12/31');
     }
   }
 });
@@ -15705,10 +15806,11 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     title: $data.title,
     items: $data.items
   }, null, 8 /* PROPS */, ["title", "items"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Sidebar, {
+    show: $data.show,
     onInfo: _cache[0] || (_cache[0] = function ($event) {
       return _ctx.set();
     })
-  })]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [$data.show == 'assessment' ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_Assessment, {
+  }, null, 8 /* PROPS */, ["show"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [$data.show == 'assessment' ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_Assessment, {
     key: 0,
     lists: $data.lists,
     selected: $data.selected,
@@ -16895,7 +16997,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     }),
 
     _: 1 /* STABLE */
-  }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("table", _hoisted_30, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tfoot", _hoisted_31, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tr", _hoisted_32, [_hoisted_33, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("th", _hoisted_34, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.units), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("th", _hoisted_35, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.total), 1 /* TEXT */)])])])])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" <b-row class=\"mb-3 mt-3\">\r\n        <div class=\"col-md-6\">\r\n            <input v-if=\"selected.is_locked == 0\" multiple ref=\"fileupload\" type=\"file\" @change=\"uploadFieldChange\" class=\"form-control \" :class=\"[($page.props.errors['files.'+0]) ? 'text-danger' : '']\" style=\"width: 300px;\" id=\"formFileSm\"/>          \r\n        </div>\r\n        <div class=\"col-md-6\">\r\n            <div class=\"hstack float-end gap-2 mt-4 mt-sm-0\">\r\n                <a v-if=\"selected.is_locked == 1\" href=\"javascript: void(0);\" class=\"text-dark fw-medium\"><i class=\"mdi mdi-file-document font-size-16 align-middle text-primary\"></i> index.html</a>\r\n                <b-button v-if=\"selected.is_locked == 0\" @click=\"save\" type=\"button\" class=\"w-lg float-end me-0\" variant=\"primary\">Save</b-button>\r\n                <b-button v-if=\"selected.is_locked == 0\" @click=\"locked(selected.id)\" :disabled=\"!selected.is_clear\" type=\"button\" class=\"float-end\" variant=\"primary\">\r\n                    <i class=\"bx bxs-lock-alt \"></i>\r\n                </b-button>\r\n            </div>\r\n        </div>\r\n    </b-row> "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Lock, {
+  }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("table", _hoisted_30, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tfoot", _hoisted_31, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tr", _hoisted_32, [_hoisted_33, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("th", _hoisted_34, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.units), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("th", _hoisted_35, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.total), 1 /* TEXT */)])])])])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Lock, {
     lists: $data.lists,
     onStatus: $options.message,
     ref: "lock"
@@ -17217,12 +17319,12 @@ var _hoisted_10 = {
 };
 var _hoisted_11 = {
   key: 0,
-  "class": "text-center fw-bold",
+  "class": "text-center fw-bold fs-11",
   width: "15%"
 };
 var _hoisted_12 = {
   key: 1,
-  "class": "text-center fw-bold",
+  "class": "text-center fw-bold fs-11",
   width: "15%"
 };
 var _hoisted_13 = {
@@ -17843,7 +17945,7 @@ var _hoisted_5 = {
   "class": "thead-light align-middle text-center"
 };
 var _hoisted_6 = {
-  "class": "fw-bold fs-13 text-primary"
+  "class": "table-light fw-bold fs-13 text-primary"
 };
 var _hoisted_7 = {
   colspan: "2"
@@ -17905,12 +18007,12 @@ var _hoisted_21 = {
   "class": "table table-centered table-bordered table-nowrap"
 };
 var _hoisted_22 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("thead", {
-  "class": "thead-light align-middle text-center"
+  "class": "table-light align-middle text-center"
 }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tr", {
-  "class": "fw-bold font-size-11"
+  "class": "fw-bold fs-11"
 }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, "Name"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, "Total")])], -1 /* HOISTED */);
 var _hoisted_23 = {
-  "class": "align-middle text-center"
+  "class": "align-middle fw-semibold text-center"
 };
 var _hoisted_24 = {
   width: "50%"
@@ -17937,10 +18039,22 @@ var _hoisted_31 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElement
   width: "15%"
 }, "Total", -1 /* HOISTED */);
 var _hoisted_32 = {
-  "class": "text-center"
+  key: 0,
+  "class": "fs-11"
 };
 var _hoisted_33 = {
   "class": "text-center"
+};
+var _hoisted_34 = {
+  "class": "table-light fs-11 fw-semibold"
+};
+var _hoisted_35 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, "Total", -1 /* HOISTED */);
+var _hoisted_36 = {
+  "class": "text-center text-primary"
+};
+var _hoisted_37 = {
+  "class": "btn btn-light float-end",
+  type: "button"
 };
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_SimpleBar = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("SimpleBar");
@@ -17949,7 +18063,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_b_modal = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("b-modal");
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_b_modal, {
     modelValue: $data.showModal,
-    "onUpdate:modelValue": _cache[0] || (_cache[0] = function ($event) {
+    "onUpdate:modelValue": _cache[2] || (_cache[2] = function ($event) {
       return $data.showModal = $event;
     }),
     title: "Financial Benefits Breakdown",
@@ -17968,13 +18082,13 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
           return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [!$data.show ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_b_row, {
             key: 0,
-            "class": "mb-4 mt-4"
+            "class": "mb-4 mt-2"
           }, {
             "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
               return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("table", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("thead", _hoisted_5, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tr", _hoisted_6, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_7, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)((0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.selected.month.toUpperCase()) + " BATCH " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.selected.batch) + " ", 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_8, "(" + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.selected.created_at) + ")", 1 /* TEXT */)])]), _hoisted_9]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tbody", _hoisted_10, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tr", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_11, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.selected.lists.length), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_12, "₱ " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.formatMoney($data.selected.total)), 1 /* TEXT */)])])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_13, [_hoisted_14, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_SimpleBar, {
                 "class": "align-items-center d-flex justify-content-center",
                 style: (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeStyle)({
-                  height: $data.height + 'px'
+                  'max-height': $data.height + 'px'
                 })
               }, {
                 "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
@@ -17997,32 +18111,47 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
             _: 1 /* STABLE */
           })) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_b_row, {
             key: 1,
-            "class": "mb-4 mt-4"
+            "class": "mb-4 mt-2"
           }, {
             "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
               return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_20, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("table", _hoisted_21, [_hoisted_22, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tbody", _hoisted_23, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tr", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_24, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.breakdown.name), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_25, "₱ " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.formatMoney($data.breakdown.total)), 1 /* TEXT */)])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("table", _hoisted_26, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("thead", _hoisted_27, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tr", _hoisted_28, [_hoisted_29, ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.headers, function (l, index) {
                 return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("th", {
                   key: index,
-                  width: 70 / $data.semesters.length + '%',
+                  width: 70 / $data.headers.length + '%',
                   "class": "text-center"
                 }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(l), 9 /* TEXT, PROPS */, _hoisted_30);
               }), 128 /* KEYED_FRAGMENT */)), _hoisted_31])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tbody", null, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.semesters, function (s, index) {
-                return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("tr", {
-                  "class": "fs-11",
+                return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, {
                   key: index
-                }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_32, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.semesters[index].academic_year) + " - " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.semesters[index].semester.name), 1 /* TEXT */), ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.headers, function (l, index) {
+                }, [($data.counts[index] != 0 ? true : false) ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("tr", _hoisted_32, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.semesters[index].academic_year) + " - " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.semesters[index].semester.name), 1 /* TEXT */), ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.headers, function (l, index) {
                   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("td", {
                     key: index,
                     "class": "text-center"
                   }, " ₱ " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.calculate(l, s.id)), 1 /* TEXT */);
-                }), 128 /* KEYED_FRAGMENT */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_33, " ₱ " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.calculate('Total', s.id)), 1 /* TEXT */)]);
-              }), 128 /* KEYED_FRAGMENT */))])])])];
+                }), 128 /* KEYED_FRAGMENT */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_33, " ₱ " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.calculate('Total', s.id)), 1 /* TEXT */)])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)], 64 /* STABLE_FRAGMENT */);
+              }), 128 /* KEYED_FRAGMENT */))]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("thead", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tr", _hoisted_34, [_hoisted_35, ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.headers, function (l, index) {
+                return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("td", {
+                  key: index,
+                  "class": "text-center"
+                }, " ₱ " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.formatMoney($options.check(l))), 1 /* TEXT */);
+              }), 128 /* KEYED_FRAGMENT */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_36, "₱ " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.formatMoney($data.breakdown.total)), 1 /* TEXT */)])])])])];
             }),
 
             _: 1 /* STABLE */
-          }))])])];
+          })), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", _hoisted_37, [$data.show ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", {
+            key: 0,
+            onClick: _cache[0] || (_cache[0] = function ($event) {
+              return $options.back();
+            }),
+            "class": "btn-content"
+          }, " Back ")) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", {
+            key: 1,
+            onClick: _cache[1] || (_cache[1] = function ($event) {
+              return $data.showModal = false;
+            }),
+            "class": "btn-content"
+          }, " Close "))])])])];
         }),
-
         _: 1 /* STABLE */
       })) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)];
     }),
@@ -18463,53 +18592,64 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
 
 var _hoisted_1 = {
-  "class": "row"
+  "class": "responsive"
 };
 var _hoisted_2 = {
-  "class": "col-md-12"
+  "class": "table table-centered table-bordered table-nowrap"
 };
-var _hoisted_3 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("hr", {
-  "class": "text-muted"
-}, null, -1 /* HOISTED */);
+var _hoisted_3 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("thead", {
+  "class": "thead-light align-middle text-center"
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tr", {
+  "class": "fw-bold fs-12"
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, "Name"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, "Total")])], -1 /* HOISTED */);
 var _hoisted_4 = {
-  "class": "table-responsive"
+  "class": "align-middle text-center fw-semibold text-primary fs-12"
 };
 var _hoisted_5 = {
+  width: "50%"
+};
+var _hoisted_6 = {
+  width: "50%"
+};
+var _hoisted_7 = {
   "class": "table table-bordered table-nowrap align-middle mb-0"
 };
-var _hoisted_6 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("thead", {
-  "class": "table-light"
-}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tr", {
-  "class": "fs-11"
-}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("th", null, "Benefit"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("th", {
-  "class": "text-center"
-}, "Amount"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("th", {
-  "class": "text-center"
-}, "Type")])], -1 /* HOISTED */);
-var _hoisted_7 = {
-  key: 0,
-  "class": "fs-13 mb-0 text-dark"
-};
 var _hoisted_8 = {
-  key: 0,
-  "class": "text-muted fs-11"
+  "class": "table-dark"
 };
 var _hoisted_9 = {
+  "class": "fs-11"
+};
+var _hoisted_10 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("th", {
+  "class": "text-center",
+  width: "16%"
+}, "Semester", -1 /* HOISTED */);
+var _hoisted_11 = ["width"];
+var _hoisted_12 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("th", {
+  "class": "text-center",
+  width: "11%"
+}, "Total", -1 /* HOISTED */);
+var _hoisted_13 = {
   key: 0,
+  "class": "fs-11"
+};
+var _hoisted_14 = {
   "class": "text-center"
 };
-var _hoisted_10 = {
+var _hoisted_15 = {
   "class": "text-center"
 };
-var _hoisted_11 = {
-  key: 0,
-  "class": "badge bg-info"
+var _hoisted_16 = {
+  "class": "table-light fs-11 fw-semibold"
 };
-var _hoisted_12 = {
-  key: 1,
-  "class": "badge bg-success"
+var _hoisted_17 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", {
+  "class": "text-center"
+}, "Total", -1 /* HOISTED */);
+var _hoisted_18 = {
+  "class": "text-center"
 };
 function render(_ctx, _cache, $props, $setup, $data, $options) {
+  var _component_b_row = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("b-row");
   var _component_b_form = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("b-form");
   var _component_b_modal = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("b-modal");
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_b_modal, {
@@ -18530,11 +18670,35 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         "class": "customform mb-2"
       }, {
         "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-          return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [_hoisted_3, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("table", _hoisted_5, [_hoisted_6, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tbody", null, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.selected.benefits, function (list) {
-            return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("tr", {
-              key: list.id
-            }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, [list.benefit ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("h5", _hoisted_7, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)((0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(list.benefit.name) + " ", 1 /* TEXT */), list.benefit.name == 'Stipend' ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("span", _hoisted_8, "(" + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(list.month) + ")", 1 /* TEXT */)) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]), list.benefit ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("td", _hoisted_9, "₱" + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.formatMoney(list.amount, list.benefit.name)), 1 /* TEXT */)) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_10, [!list.release_type ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("span", _hoisted_11, "Partial")) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("span", _hoisted_12, "Full"))])]);
-          }), 128 /* KEYED_FRAGMENT */))])])])])])];
+          return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_b_row, {
+            "class": "mb-4 mt-2"
+          }, {
+            "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+              return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("table", _hoisted_2, [_hoisted_3, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tbody", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tr", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_5, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.breakdown.name), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_6, "₱ " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.formatMoney($data.breakdown.total)), 1 /* TEXT */)])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("table", _hoisted_7, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("thead", _hoisted_8, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tr", _hoisted_9, [_hoisted_10, ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.headers, function (l, index) {
+                return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("th", {
+                  key: index,
+                  width: 73 / $data.headers.length + '%',
+                  "class": "text-center"
+                }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(l), 9 /* TEXT, PROPS */, _hoisted_11);
+              }), 128 /* KEYED_FRAGMENT */)), _hoisted_12])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tbody", null, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.semesters, function (s, index) {
+                return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, {
+                  key: index
+                }, [($data.counts[index] != 0 ? true : false) ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("tr", _hoisted_13, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_14, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.semesters[index].academic_year) + " - " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.semesters[index].semester.name), 1 /* TEXT */), ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.headers, function (l, index) {
+                  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("td", {
+                    key: index,
+                    "class": "text-center"
+                  }, " ₱ " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.calculate(l, s.id)), 1 /* TEXT */);
+                }), 128 /* KEYED_FRAGMENT */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_15, " ₱ " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.calculate('Total', s.id)), 1 /* TEXT */)])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)], 64 /* STABLE_FRAGMENT */);
+              }), 128 /* KEYED_FRAGMENT */))]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("thead", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tr", _hoisted_16, [_hoisted_17, ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.headers, function (l, index) {
+                return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("td", {
+                  key: index,
+                  "class": "text-center"
+                }, " ₱ " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.formatMoney($options.check(l))), 1 /* TEXT */);
+              }), 128 /* KEYED_FRAGMENT */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_18, "₱ " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.formatMoney($data.breakdown.total)), 1 /* TEXT */)])])])])];
+            }),
+
+            _: 1 /* STABLE */
+          })];
         }),
 
         _: 1 /* STABLE */
@@ -22273,7 +22437,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
               return _ctx.preview && _ctx.preview.apply(_ctx, arguments);
             }, ["prevent"])),
             enctype: "multipart/form-data"
-          }, [_hoisted_8, $data.isLoading ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("span", _hoisted_9, _hoisted_12)) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), $data.result ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_13, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_14, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_15, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", _hoisted_16, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.success.length), 1 /* TEXT */)]), _hoisted_17])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_18, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_19, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", _hoisted_20, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.failed.length), 1 /* TEXT */)]), _hoisted_21])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_22, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_23, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", _hoisted_24, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.duplicate.length), 1 /* TEXT */)]), _hoisted_25])])])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), !$data.isLoading ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_26, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+          }, [_hoisted_8, $data.isLoading ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("span", _hoisted_9, _hoisted_12)) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), $data.result ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_13, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_14, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_15, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", _hoisted_16, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.success.length), 1 /* TEXT */)]), _hoisted_17])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_18, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_19, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", _hoisted_20, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.failed.length), 1 /* TEXT */)]), _hoisted_21])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_22, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_23, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", _hoisted_24, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.duplicate.length), 1 /* TEXT */)]), _hoisted_25])])])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), !$data.hide2 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_26, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
             onClick: _cache[1] || (_cache[1] = function () {
               return $options.sync && $options.sync.apply($options, arguments);
             }),

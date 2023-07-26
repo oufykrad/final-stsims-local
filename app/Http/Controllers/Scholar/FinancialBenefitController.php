@@ -124,11 +124,13 @@ class FinancialBenefitController extends Controller
     public function benefits($info){
         $scholars = (!empty(json_decode($info))) ? json_decode($info) : NULL;
         $month = now();
-        //date("Y").'-'.date("m").'-1'
-        $data = Scholar::with('profile',)->with('benefits.benefit')->with('program')
+
+        $data = Scholar::with('profile','program')->with('benefits.benefit')
+        ->with('enrollments.semester.semester')
         ->withWhereHas('benefits', function ($query) use ($month) {
             $query->where('status_id',11)->where('month','<=',$month);
         })
+       
         ->whereIn('id',$scholars)
         ->get();
 
