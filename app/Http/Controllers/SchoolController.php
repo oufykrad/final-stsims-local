@@ -6,6 +6,7 @@ use Hashids\Hashids;
 use App\Models\Setting;
 use App\Models\SchoolCampus;
 use App\Models\SchoolSemester;
+use App\Models\SchoolGrading;
 use App\Models\SchoolCourseProspectus;
 use App\Models\ListCourse;
 use Illuminate\Http\Request;
@@ -83,6 +84,7 @@ class SchoolController extends Controller
         
         $data = new IndexResource(
             SchoolCampus::with('school')
+            ->with('gradings')
             ->with('school.class','term:id,name','grading:id,name')
             ->with('semesters.semester','courses.course')
             ->with('region:region,code','province:name,code','municipality:name,code')
@@ -121,10 +123,6 @@ class SchoolController extends Controller
                 $message = 'Semester successfully created. Thanks';
                 $data = new DefaultResource(SchoolSemester::create($request->all()));
                 $update = SchoolSemester::where('id','!=',$data->id)->where('school_id',$data->school_id)->update(['is_active' => false]);
-            break;
-            case 'course': 
-                $message = 'Course successfully added. Thanks';
-                $data = new CourseResource(SchoolCourse::create($request->all()));
             break;
             case 'prospectus': 
                 $level = ['First Year','Second Year','Third Year','Fourth Year','Fifth Year'];
@@ -166,9 +164,23 @@ class SchoolController extends Controller
 
     public function update(Request $request){
         if($request->type == 'grading'){
-            $data = SchoolGrading::where('school_id',$request->id)->first();
-            $data->update($request->except('editable'));
-            $message = 'Prospectus successfully updated. Thanks';
+            if($request->editable){
+                $data = SchoolGrading::find($request->id);
+                $data->update($request->except('editable','type'));
+                $message = 'Grade successfully updated. Thanks';
+            }else{
+                $data = SchoolGrading::create($request->all());
+                $message = 'Grade successfully created. Thanks';
+            }
+            
+            return back()->with([
+                'data' => $data,
+                'message' => $message,
+                'type' => 'bxs-check-circle'
+            ]);
+        }else if($request->type == 'disable'){
+            $data = SchoolGrading::where('id',$request->id)->update(['is_active' => $request->is_active]);
+            $message = 'Grade successfully updated. Thanks';
             
             return back()->with([
                 'data' => $data,

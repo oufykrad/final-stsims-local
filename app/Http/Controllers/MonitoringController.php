@@ -12,6 +12,7 @@ use App\Models\SchoolSemester;
 use App\Models\SchoolCampus;
 use Illuminate\Http\Request;
 use App\Http\Resources\MonitoringResource;
+use App\Http\Resources\Scholars\Benefits\ListResource;
 
 class MonitoringController extends Controller
 {
@@ -35,9 +36,29 @@ class MonitoringController extends Controller
             case 'statuses':
                 return $this->statuses();
             break;
+            case 'monitoring':
+                return $this->monitoring($request);
+            break;
             default : 
             return inertia('Modules/Monitoring/Index');
         }
+    }
+
+    public function monitoring($request){
+        $scholar_id = $request->id;
+
+        $data = Scholar::with('profile','program')->with('benefits.benefit')
+        ->with('enrollments.semester.semester')->with('enrollments.semester.benefits')->with('enrollments.level')->with('enrollments.lists')
+        ->withWhereHas('benefits', function ($query) {
+            $query->where('status_id',13);
+        })
+        ->withWhereHas('enrollments.semester.benefits', function ($query) use ($scholar_id) {
+            $query->where('scholar_id',$scholar_id)->where('status_id',13);
+        })
+        ->where('id',$scholar_id)
+        ->first();
+
+        return new ListResource($data);
     }
 
     public function statuses(){

@@ -8,10 +8,15 @@
                     <option :value="null" selected>Select Program</option>
                     <option :value="list.id" v-for="list in program_list" v-bind:key="list.id">{{list.name}}</option>
                 </select>
-                <select v-model="subprogram" @change="fetch()" class="form-select" id="inputGroupSelect01" style="width: 120px;">
+                <select v-model="type" @change="fetch()" class="form-select" id="inputGroupSelect01" style="width: 120px;">
+                    <option :value="null" selected>Select Type</option>
+                    <option value="1">Undergraduate</option>
+                    <option value="0">JLSS</option>
+                </select>
+                <!-- <select v-model="subprogram" @change="fetch()" class="form-select" id="inputGroupSelect01" style="width: 120px;">
                     <option :value="null" selected>Select Subprogram</option>
                     <option :value="list.id" v-for="list in subprogram_list" v-bind:key="list.id">{{list.name}}</option>
-                </select>
+                </select> -->
                 <select v-model="status" @change="fetch()" class="form-select" id="inputGroupSelect02" style="width: 120px;">
                     <option :value="null" selected>Select Status</option>
                     <option :value="list.id" v-for="list in status_list" v-bind:key="list.id">{{list.name}}</option>
@@ -98,6 +103,7 @@ export default {
             category: null,
             year: null,
             count2: null,
+            type: null,
             sorty: 'asc',
             keyword: '',
         }
@@ -126,7 +132,7 @@ export default {
             return this.programs.filter(x => x.is_sub === 1).filter(x => x.is_active === 1);
         },
         subprogram_list : function() {
-            return this.programs.filter(x => x.is_sub === 0).filter(x => x.is_active === 1);
+            return this.programs; 
         },
         status_list : function() {
             return this.statuses.filter(x => x.type != 'Benefit Status');
@@ -146,6 +152,7 @@ export default {
                 'program': (this.program == null) ? null : this.program,
                 'subprogram': (this.subprogram == null) ? null : this.subprogram,
                 'category': (this.category == null) ? null : this.category,
+                'type': (this.type == null) ? null : this.type,
                 'year': (this.year === '' || this.year == null) ? '' : this.year,
                 'counts': ((window.innerHeight-350)/56),
                 'sorty': this.sorty
@@ -193,6 +200,7 @@ export default {
             this.subprogram = null;
             this.category = null;
             this.year = null;
+            this.type = null;
             this.keyword = '';
             this.fetch();
 

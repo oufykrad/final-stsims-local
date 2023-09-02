@@ -28,7 +28,8 @@ class SchoolResource extends JsonResource
             'campus' => ($this->campus == 'MAIN') ?  ucwords(strtolower($this->campus)) : ucwords(strtolower($this->campus)),
             'address' => ucwords($this->address),
             'semester' => ($semester) ? $semester : false,
-            'is_enrolled' => ($enrolled) ? true : false
+            'is_enrolled' => ($enrolled) ? true : false,
+            'gradings' => $this->gradings
         ];
     }
 }

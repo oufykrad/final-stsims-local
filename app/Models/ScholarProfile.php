@@ -28,13 +28,20 @@ class ScholarProfile extends Model
         return $this->belongsTo('App\Models\Scholar', 'scholar_id', 'id');
     }
 
-    // public function getBirthdayAttribute($value)
-    // {
-    //     if($value == null){
-    //         return null;
-    //     }
-    //     return date('M d, Y', strtotime($value));
-    // }
+    public function getFirstnameAttribute($value)
+    {
+        return strtoupper(strtolower($value));
+    }
+
+    public function getLastnameAttribute($value)
+    {
+        return strtoupper(strtolower($value));
+    }
+
+    public function getMiddlenameAttribute($value)
+    {
+        return strtoupper(strtolower($value));
+    }
 
     // public function getSexAttribute($value)
     // {

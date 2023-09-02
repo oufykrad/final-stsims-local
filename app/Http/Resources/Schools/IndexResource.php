@@ -33,6 +33,7 @@ class IndexResource extends JsonResource
             'courses' => CourseResource::collection($this->courses),
             'semesters' => SemesterResource::collection($this->semesters),
             'address' => $address.$municipality.$province.$region,
+            'gradings' => $this->gradings,
             'display' => ($this->is_main) ? ucwords(strtolower($this->school->name)) : ucwords(strtolower($this->school->name)).' - '.ucwords(strtolower($this->campus)),
         ];
     }

@@ -14,6 +14,21 @@
                 </tbody>
             </table>
         </div>
+         <hr class="text-muted mt-n1 mb-3"/>
+        <div class="table-responsive">
+            <table class="table table-borderless table-sm table-centered align-middle table-nowrap">
+                <tbody class="border-0">
+                    <tr v-for="(count,index) in types" v-bind:key="index">
+                        <td>
+                            <h4 class="text-truncate fs-14 fs-medium mb-0"><i class="ri-stop-fill align-middle fs-18 me-2" :class="colors[index]"></i>{{options2[index]}}</h4>
+                        </td>
+                        <td class="text-end">
+                            <p class="fw-bold mb-0" :class="colors[index]">{{count}}</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
         <hr class="text-muted mt-n1 mb-3"/>
         <b-row class="g-1">
             <b-col lg="4">
@@ -68,8 +83,10 @@ export default {
         return {
             currentUrl: window.location.origin,
             statistics: [],
+            types: [],
             active: [],
             options: ['Ongoing Scholars','Graduated Scholars','Total Scholars'],
+            options2: ['Undegraduate Scholarhip','Junior Level Science Scholarship'],
             colors: ['text-primary','text-info','text-success']
         }
     },
@@ -84,6 +101,7 @@ export default {
             .then(response => {
                 this.statistics = response.data.statistics;
                 this.active = response.data.active;
+                this.types = response.data.types;
             })
             .catch(err => console.log(err));
         },

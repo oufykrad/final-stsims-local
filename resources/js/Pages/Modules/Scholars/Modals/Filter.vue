@@ -31,6 +31,18 @@
                     </multiselect>
                 </div> -->
                 <div class="mb-2">
+                    <label for="country-select" class="form-label text-muted text-uppercase fw-semibold mb-1 fs-11">Subprogram</label>
+                    <multiselect 
+                        v-model="subprogram" 
+                        :options="programs"
+                        :allow-empty="false"
+                        :show-labels="false"
+                        label="name" track-by="id"
+                        placeholder="Select Subprogram">
+                    </multiselect>
+                </div>
+                <hr class="mt-4"/>
+                <div class="mb-2">
                     <label for="country-select" class="form-label text-muted text-uppercase fw-semibold mb-1 fs-11">School</label>
                     <multiselect 
                         v-model="school" 
@@ -54,7 +66,7 @@
                         placeholder="Select Course">
                     </multiselect>
                 </div>
-
+                <hr class="mt-4"/>
                 <div class="mb-2">
                     <label for="country-select" class="form-label text-muted text-uppercase fw-semibold mb-1 fs-11">Region</label>
                      <multiselect 
@@ -133,6 +145,7 @@ export default {
             schools: [],
             courses: [],
             statuses:[],
+            subprogram: '',
             school: '',
             course: '',
             program: '',
@@ -167,7 +180,8 @@ export default {
                 'municipality' : (this.municipality != null) ? this.municipality.code : '',
                 'barangay' : (this.barangay != null) ? this.barangay.code : '',
                 'school' : (this.school != null) ? this.school.id : '',
-                'course' : (this.course != null) ? this.course.id : ''
+                'course' : (this.course != null) ? this.course.id : '',
+                'subprogram' : (this.subprogram != null) ? this.subprogram.id : '',
             };
             this.$emit('status', this.filter);
         },
@@ -229,6 +243,7 @@ export default {
             this.school = '';
             this.course = '';
             this.program = '';
+            this.subprogram = '';
             this.status = '';
             this.year = '';
         }

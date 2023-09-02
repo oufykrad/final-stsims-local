@@ -51,6 +51,12 @@ trait GradeTrait {
         return $data;
     }
 
+    public function unlockGrade($request){
+        $data = ScholarEnrollment::where('id',$request->id)->first();
+        $data->update($request->except('editable'));
+        return $data;
+    }
+
     public function lockGrade($request){
         $data = ScholarEnrollment::where('id',$request->id)->first();
         $data->update($request->except('editable'));

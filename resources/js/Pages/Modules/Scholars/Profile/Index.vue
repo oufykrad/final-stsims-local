@@ -92,16 +92,16 @@
                         <!-- <Overview /> -->
                     </div>
                     <div class="tab-pane" id="financial" role="tabpanel"> 
-                        <!-- <Financial :id="scholar.id" :ays="scholar.ays" :types="scholar.types" :privileges="privileges" :benefits="benefits"/> -->
+                        <Financial :financials="enrollments"/>
                     </div>
                     <div class="tab-pane" id="enrollment" role="tabpanel"> 
-                        <!-- <Enrollment :enrollments="scholar.enrollments"/> -->
+                        <Enrollment :financials="enrollments"/>
                     </div>
                     <div class="tab-pane" id="history" role="tabpanel"> 
                         <!-- <History /> -->
                     </div>
                     <div class="tab-pane" id="prospectus" role="tabpanel"> 
-                        <!-- <Prospectus :prospectus="scholar.education.information.prospectus"/> -->
+                        <Prospectus :prospectus="scholar.education.info.prospectus"/>
                     </div>
                 </div>
             </div>
@@ -110,8 +110,12 @@
 </template>
 
 <script>
+import Prospectus from './Pages/Prospectus.vue';
+import Financial from './Pages/Financial.vue';
+import Enrollment from './Pages/Enrollment.vue';
 export default {
-    props: ['user','privileges','benefits'],
+    props: ['user','privileges','benefits','enrollments'],
+    components : { Prospectus, Financial, Enrollment },
     data(){
         return {
             currentUrl: window.location.origin,

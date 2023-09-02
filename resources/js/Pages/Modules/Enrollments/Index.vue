@@ -6,7 +6,7 @@
             <Sidebar :show="show" @info="set()"/>
         </div>
         <div class="file-manager-content w-100 p-4 pb-0" style="height: calc(100vh - 180px)" ref="box">
-            <Assessment v-if="show == 'assessment'" :lists="lists" :selected="selected" :user="scholar.code" @status="message" ref="assessment"/>
+            <Assessment v-if="show == 'assessment'" :lists="lists" :selected="selected" :gradings="scholar.education.school.gradings" :user="scholar.code" @status="message" ref="assessment"/>
             <Enroll v-else-if="show == 'enroll'" :user="scholar" :dropdowns="dropdowns" ref="enroll"/>
             <Prospectus v-else-if="show == 'prospectus'" ref="prospectus"/>
             <Home v-else ref="home"/>

@@ -7,6 +7,7 @@ use App\Models\Scholar;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Resources\Scholars\IndexResource;
+use App\Http\Resources\Scholars\Benefits\ListResource;
 use App\Http\Traits\ScholarUpdate;
 use App\Http\Requests\ScholarRequest;
 
@@ -27,6 +28,7 @@ class IndexController extends Controller
             case 'counts':
                 return [
                     'statistics' => $this->statistics($request),
+                    'types' => $this->types($request),
                     'active' => []
                 ];
             break;
@@ -71,14 +73,15 @@ class IndexController extends Controller
                     (property_exists($filter, 'course')) ? $query->where('course_id',$filter->course) : '';
                 }
             })
-            ->where(function ($query) use ($info) {
+            ->where(function ($query) use ($info,$filter) {
                 ($info->program == null) ? '' : $query->where('program_id',$info->program);
-                ($info->subprogram == null) ? '' : $query->where('subprogram_id',$info->subprogram);
+                // ($filter != null) ? ($filter->subprogram == null) ? '' : $query->where('subprogram_id',$filter->subprogram) : '';
                 ($info->category == null) ? '' : $query->where('category_id',$info->category);
                 ($info->status == null) ? '' : $query->where('status_id',$info->status);
                 ($info->year == null) ? '' : $query->where('awarded_year',$info->year);
+                ($info->type == null) ? '' : $query->where('is_undergrad',$info->type);
              })
-             ->orderBy('awarded_year','ASC')
+            ->orderBy('awarded_year',$info->sorty)
             ->paginate($info->counts)
             ->withQueryString()
         );
@@ -116,13 +119,26 @@ class IndexController extends Controller
 
         $benefits = [];
 
+        $enrollments = Scholar::with('benefits.benefit')
+        ->with('enrollments.semester.semester')->with('enrollments.semester.benefits')->with('enrollments.level')->with('enrollments.lists')
+        ->withWhereHas('benefits', function ($query) {
+            $query->where('status_id',13);
+        })
+        ->withWhereHas('enrollments.semester.benefits', function ($query) use ($id) {
+            $query->where('scholar_id',$id)->where('status_id',13);
+        })
+        ->where('id',$id)
+        ->first();
+
         return inertia('Modules/Scholars/Profile/Index',[
             'user' => new IndexResource($data),
-            'benefits' => $benefits
+            'benefits' => $benefits,
+            'enrollments' => new ListResource($enrollments)
         ]);
     }
 
     public function ongoing($request){
+        $keyword = $request->keyword;
         $data = IndexResource::collection(
             Scholar::
             with('addresses.region','addresses.province','addresses.municipality','addresses.barangay')
@@ -134,6 +150,13 @@ class IndexController extends Controller
             })
             ->when($request->status, function ($query, $status) {
                 $query->where('status_id',$status);
+            })
+            ->whereHas('profile',function ($query) use ($keyword) {
+                $query->when($keyword, function ($query, $keyword) {
+                    $query->where(\DB::raw('concat(firstname," ",lastname)'), 'LIKE', '%'.$keyword.'%')
+                    ->where(\DB::raw('concat(lastname," ",firstname)'), 'LIKE', '%'.$keyword.'%')
+                    ->orWhere('spas_id','LIKE','%'.$keyword.'%');
+                });
             })
             ->orderBy('awarded_year','ASC')
             ->paginate($request->counts)

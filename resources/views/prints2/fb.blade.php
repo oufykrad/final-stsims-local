@@ -99,7 +99,7 @@ border-top: none !important;
        
     ?>
 
-    <div style="font-family:Calibri;">
+    <!-- <div style="font-family:Calibri;">
         <center style="font-size: 12px; font-family:Arial, Helvetica, sans-serif; font-weight: bold;">DOST-SEI SCHOLARSHIP PAYMENTS FOR CREDIT TO THE</center>
         <center style="font-size: 12px; font-family:Arial, Helvetica, sans-serif; font-weight: bold;">SA-LBP ACCOUNTS OF SCHOLARS RA 7687</center>
     </div>
@@ -145,9 +145,9 @@ border-top: none !important;
             <span class="nor" style="font-size: 12px;"></span>
             <hr style="height:1px;border:none;color:#333;background-color:#333; margin-bottom: 1px; margin-top: 0px;" />
         </div>
-    </div>
+    </div> -->
 
-    <div class="page-break"></div>
+    <!-- <div class="page-break"></div>
 
     <div style="font-family:Calibri;">
         <span style="position: absolute; top: -10; left: 40; font-size: 11px;">{{date('d M Y',strtotime(now() . ' +1 day'))}}</span>
@@ -213,7 +213,7 @@ border-top: none !important;
         </table>
     </div>
 
-    <div class="page-break"></div>
+    <div class="page-break"></div> -->
 
     
     <div style="font-family:Calibri;">
@@ -224,10 +224,10 @@ border-top: none !important;
             <span style="font-size: 16px; font-family:Arial, Helvetica, sans-serif; font-weight: bold;">DEPARTMENT OF SCIENCE AND TECHNOLOGY</span><br />
             <span style="font-size: 14px; font-family:Arial, Helvetica, sans-serif;">Regional Office IX</span>
         </div>
-        <span style="font-family:Arial, Helvetica, sans-serif; position: absolute; top: 100; right: 140; font-size: 16px;">{{date('d M Y',strtotime(now()))}}</span>
+        <span style="font-family:Arial, Helvetica, sans-serif; position: absolute; top: 100; right: 140; font-size: 16px;">{{date('d M Y',strtotime(now().' +1 day'))}}</span>
 
         <center style="font-size: 24px; letter-spacing: .5rem; margin-top: 140px; font-family:Arial, Helvetica, sans-serif; font-weight: bold;">CERTIFICATION</center>
-        <p style="font-family:Arial, Helvetica, sans-serif; margin-top:50px; margin-left: 80px; margin-right: 80px; font-size: 15px; text-indent: 50px; text-align: justify; text-justify: inter-word;">This is to authorized <span style="font-family:Arial, Helvetica, sans-serif; font-weight:bold;">Land bank of the Philippines</span> (LBP) to debit the amount of <span style="font-family:Arial, Helvetica, sans-serif; font-weight:bold;">{{strtoupper($number)}} PESOS (Php {{number_format($benefits['total'],2)}})</span> from the <span style="font-family:Arial, Helvetica, sans-serif; font-weight:bold;">DOST-SEI S&T Scholarship Fund</span> with <span style="font-family:Arial, Helvetica, sans-serif; font-weight:bold;">Account No. 1952-1000-64</span> to the attached Payroll Register Batch 00052.</p>
+        <p style="font-family:Arial, Helvetica, sans-serif; margin-top:50px; margin-left: 80px; margin-right: 80px; font-size: 15px; text-indent: 50px; text-align: justify; text-justify: inter-word;">This is to authorized <span style="font-family:Arial, Helvetica, sans-serif; font-weight:bold;">Land bank of the Philippines</span> (LBP) to debit the amount of <span style="font-family:Arial, Helvetica, sans-serif; font-weight:bold;">{{strtoupper($number)}} PESOS (Php {{number_format($benefits['total'],2)}})</span> from the <span style="font-family:Arial, Helvetica, sans-serif; font-weight:bold;">DOST-SEI S&T Scholarship Fund</span> with <span style="font-family:Arial, Helvetica, sans-serif; font-weight:bold;">Account No. 1952-1000-64</span> to the attached Payroll Register Batch 00056.</p>
 
         <div style="margin-top: 100px; font-family:Arial, Helvetica, sans-serif;">
             <div style="float: right; width: 240px; margin-right: 80px;">

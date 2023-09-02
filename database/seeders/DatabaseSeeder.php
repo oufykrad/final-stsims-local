@@ -67,5 +67,6 @@ class DatabaseSeeder extends Seeder
         // $this->call(ScholarBenefitsTableSeeder::class);
         // $this->call(ScholarEnrollmentsTableSeeder::class);
         // $this->call(ScholarEnrollmentListsTableSeeder::class);
+        // $this->call(SettingsTableSeeder::class);
     }
 }

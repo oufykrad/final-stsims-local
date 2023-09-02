@@ -79,6 +79,11 @@ class SchoolCampus extends Model
         return $this->hasMany('App\Models\ScholarEducation', 'school_id');
     } 
 
+    public function gradings()
+    {
+        return $this->hasMany('App\Models\SchoolGrading', 'school_id');
+    } 
+
     public function getCampusAttribute($value){
         return strtoupper($value);
     }

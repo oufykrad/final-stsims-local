@@ -11,11 +11,14 @@
         </div>
         <div class="col-md-6">
             <div class="hstack float-end gap-2 mt-4 mt-sm-0">
-                <button v-if="selected.is_locked == 0" @click="locked(selected.id)" :disabled="!selected.is_clear" v-b-tooltip.hover title="Lock" class="btn btn-primary btn-md float-end me-0" type="button">
+                <button v-if="selected.is_locked == 0" @click="locked(selected)" :disabled="!selected.is_clear" v-b-tooltip.hover title="Lock" class="btn btn-primary btn-md float-end me-0" type="button">
                     <div class="btn-content"><i class="bx bxs-lock-alt"></i></div>
                 </button>
                 <button v-if="selected.is_locked == 0" @click="save()" class="btn btn-success btn-md btn-label" type="button">
                     <div class="btn-content"><i class="ri-check-double-line label-icon align-middle fs-16 me-2"></i> Save </div>
+                </button>
+                 <button v-else @click="locked(selected)" class="btn btn-danger btn-md btn-label" type="button" v-b-tooltip.hover title="Scholarship Coordinator Only">
+                    <div class="btn-content"><i class="ri-lock-unlock-fill label-icon align-middle fs-16 me-2" ></i> Unlock </div>
                 </button>
             </div>
         </div>
@@ -38,13 +41,18 @@
                 <SimpleBar class="align-items-center d-flex justify-content-center">
                     <table class="table table-centered table-bordered table-nowrap">
                         <tbody class="fs-12">
-                            <tr v-for="(list,index) in lists" v-bind:key="list.id" :class="[(list.grade == 5 || list.grade == 'F' || list.grade == 'f') ? 'table-danger' : '']">
+                            <tr v-for="(list,index) in lists" v-bind:key="list.id" :class="[(list.is_failed) ? 'table-danger' : '']">
                                 <td style="width: 5%;" class="text-center">{{ index+1 }}</td>
                                 <td style="width: 15%;" class="text-center fw-bold">{{list.code}} <span v-if="list.is_lab == true" class="text-warning fw-bold">(Lab)</span></td>
                                 <td style="width: 60%;" class="text-center">{{list.subject}} <span v-if="list.is_lab == true" class="text-warning fw-bold">(Lab)</span></td>
                                 <td style="width: 10%;" class="text-center">{{list.unit}}</td>
                                 <td style="width: 10%;" class="text-center">
-                                    <input type="text" v-model="list.grade" :disabled="selected.is_locked == 1" class="text-center mt-n1 mb-n2 form-control form-control-sm" style="text-transform: uppercase">
+                                    <!-- <input type="text" v-model="list.grade" :disabled="selected.is_locked == 1" class="text-center mt-n1 mb-n2 form-control form-control-sm" style="text-transform: uppercase"> -->
+                                     <select v-model="list.grade" class="form" v-if="selected.is_locked == 0">
+                                        <option :value="null" selected></option>
+                                        <option :value="list1.grade" v-for="(list1,index) in gradings" v-bind:key="index">{{list1.grade}}</option>
+                                    </select>
+                                    <span class="fw-semibold" v-else>{{list.grade}}</span>
                                 </td>
                             </tr>
                         </tbody>
@@ -71,7 +79,7 @@ import Confirm from '../Modals/Confirm.vue';
 import { SimpleBar } from 'simplebar-vue3';
 export default {
     components: { SimpleBar, Lock, Confirm },
-    props: ['selected','user'],
+    props: ['selected','user','gradings'],
     data() {
         return {
             currentUrl: window.location.origin,
@@ -81,13 +89,15 @@ export default {
             type: null,
         }
     },
+    created(){
+        console.log(this.gradings);
+    },
     watch: {
         datares: {
             deep: true,
             handler(val = null) {
                 if(val != null && val !== ''){
                     this.message(val.data);
-                    console.log('haha');
                 }
             },
         },

@@ -32,7 +32,7 @@
                     <div class="input-group mb-1">
                         <span class="input-group-text"> <i class="ri-search-line search-icon"></i></span>
                         <input type="text" v-model="keyword" placeholder="Search scholar" class="form-control" style="width: 30%;">
-                        <select v-model="program" @change="fetch()" class="form-select" id="inputGroupSelect01" style="width: 120px;">
+                        <select v-model="program" @change="fetchScholars()" class="form-select" id="inputGroupSelect01" style="width: 120px;">
                             <option :value="null" selected>Select Program</option>
                             <option :value="list.id" v-for="list in program_list" v-bind:key="list.id">{{list.name}}</option>
                         </select>
@@ -81,11 +81,12 @@
                                 <span :class="'badge '+user.status.color+' '+user.status.others">{{user.status.name}}</span>
                             </td>
                             <td class="text-end">
-                                <b-button v-if="user.user == null" @click="authenticate(user)" variant="soft-primary" v-b-tooltip.hover title="Create Scholar Account" size="sm" class="edit-list me-1"><i class="ri-user-add-fill align-bottom"></i> </b-button>
+                                <b-button @click="view(user)" variant="soft-info" v-b-tooltip.hover title="View" size="sm" class="remove-list me-1"><i class="ri-eye-fill align-bottom"></i></b-button>
+                                <!-- <b-button v-if="user.user == null" @click="authenticate(user)" variant="soft-primary" v-b-tooltip.hover title="Create Scholar Account" size="sm" class="edit-list me-1"><i class="ri-user-add-fill align-bottom"></i> </b-button>
                                 <b-button v-if="user.account_no == null && user.status.type == 'Ongoing'" @click="update(user,'account_no')" variant="soft-danger" v-b-tooltip.hover title="Update Account No." size="sm" class="remove-list me-1"><i class="ri-bank-card-2-fill align-bottom"></i></b-button>
                                 <b-button v-if="user.education.is_completed == 0" @click="update(user,'education')" variant="soft-danger" v-b-tooltip.hover title="Update Education" size="sm" class="remove-list me-1"><i class="ri-hotel-fill align-bottom"></i></b-button>
                                 <b-button v-if="user.addresses[0].is_completed == 0" @click="update(user,'address')" variant="soft-danger" v-b-tooltip.hover title="Update Address" size="sm" class="remove-list me-1"><i class="ri-map-pin-fill align-bottom"></i></b-button>
-                                <Link v-if="user.is_completed == 1" :href="`/scholars/${user.code}`"><b-button variant="soft-info" v-b-tooltip.hover title="View" size="sm" class="remove-list me-1"><i class="ri-eye-fill align-bottom"></i></b-button></Link>
+                                <Link v-if="user.is_completed == 1" :href="`/scholars/${user.code}`"><b-button variant="soft-info" v-b-tooltip.hover title="View" size="sm" class="remove-list me-1"><i class="ri-eye-fill align-bottom"></i></b-button></Link> -->
                                 <!-- <b-button variant="soft-primary" v-b-tooltip.hover title="Edit" size="sm" class="edit-list"><i class="ri-pencil-fill align-bottom"></i> </b-button> -->
                             </td>
                         </tr>
@@ -101,13 +102,15 @@
             </div>
          </div> -->
     </div>
+    <View ref="view"/>
 </template>
 <script>
+import View from './Modals/View.vue';
 import Sidebar from './Sidebar.vue';
 import PageHeader from "@/Shared/Components/PageHeader.vue";
 import Pagination from "@/Shared/Components/Pagination.vue";
 export default {
-    components: { PageHeader, Sidebar, Pagination },
+    components: { PageHeader, Sidebar, Pagination, View },
     props: ['semester_year'],
     data() {
         return {
@@ -120,13 +123,22 @@ export default {
             meta: {},
             links: {},
             status: null,
+            keyword: ''
         };
     },
     created(){
         this.fetch();
         this.fetchScholars();
     },
+     watch: {
+        keyword(newVal){
+            this.checkSearchStr(newVal)
+        }
+    },
     methods: {
+         checkSearchStr: _.debounce(function(string) {
+            this.fetchScholars();
+        }, 300),
         fetch(){
             axios.get(this.currentUrl+'/monitoring', {
                 params: {
@@ -144,7 +156,8 @@ export default {
                 params: {
                     type: 'ongoing',
                     counts: ((window.innerHeight-450)/56),
-                    status: this.status
+                    status: this.status,
+                    keyword: this.keyword
                 }
             })
             .then(response => {
@@ -157,6 +170,9 @@ export default {
         updateStatus(status){
             this.status = status;
             this.fetchScholars();
+        },
+        view(user){
+            this.$refs.view.show(user);
         }
     }
 }

@@ -37,7 +37,7 @@ class EnrollmentController extends Controller
 
         $data = Scholar::with('profile')
         ->with('program:id,name','subprogram:id,name','category:id,name','status:id,name,type,color,others')
-        ->with('education.school.school','education.school.semesters','education.course','education.level')
+        ->with('education.school.school','education.school.semesters','education.school.gradings','education.course','education.level')
         ->with('enrollments')
         ->whereHas('status',function ($query){
             $query->where('type','Ongoing');
@@ -62,7 +62,11 @@ class EnrollmentController extends Controller
                     return new EnrollmentResource($this->saveGrade($request));
                 break;
                 case 'lock': 
-                    return new EnrollmentResource($this->lockGrade($request));
+                    if($request->editable){
+                        return new EnrollmentResource($this->unlockGrade($request));
+                    }else{
+                        return new EnrollmentResource($this->lockGrade($request));
+                    }
                 break;
             }
         });

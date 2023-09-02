@@ -84,7 +84,7 @@
                     <Course :id="school.data.id" :term="school.data.term"/>
                 </div>
                 <div class="tab-pane fade" id="grading" role="tabpanel">
-                    <Grading :id="school.data.id"/>
+                    <Grading :id="school.data.id" :gradings="school.data.gradings"/>
                 </div>
             </div>
        </b-col>

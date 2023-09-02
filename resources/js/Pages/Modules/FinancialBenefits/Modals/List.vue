@@ -96,9 +96,11 @@
                             </table>
                         </div>
                     </b-row>
-                    <button class="btn btn-light float-end" type="button">
-                        <div v-if="show" @click="back()" class="btn-content"> Back </div>
-                        <div v-else @click="showModal = false" class="btn-content"> Close </div>
+                    <button v-if="show" @click="back()" class="btn btn-light float-end" type="button">
+                        <div class="btn-content"> Back </div>
+                    </button>
+                     <button v-else  @click="showModal = false" class="btn btn-light float-end" type="button">
+                        <div class="btn-content"> Close </div>
                     </button>
                 </div>
             </div>

@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {return inertia('Auth/Login'); });
+Route::get('/', function () {return inertia('Index'); });
 Route::middleware(['auth'])->group(function () {
     Route::resource('/home', App\Http\Controllers\HomeController::class);
     Route::resource('/monitoring', App\Http\Controllers\MonitoringController::class);

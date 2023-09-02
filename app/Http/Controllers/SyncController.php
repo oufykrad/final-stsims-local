@@ -283,6 +283,7 @@ class SyncController extends Controller
                 
 
                 $data = new Setting;
+                $data->year = date('Y');
                 $data->information = json_encode($information);
                 $data->signatories = json_encode($signatories);
                 $data->agency_id = $datas;
@@ -509,6 +510,7 @@ class SyncController extends Controller
                 $duplicate = array();
                 
                 $lists= $datas;
+                
                 foreach($lists as $data){
                     $arr = (array)$data;
                     $sub = array_splice($arr,11);
@@ -522,6 +524,7 @@ class SyncController extends Controller
                         // dd($address,$education,$profile);
                         \DB::beginTransaction();
                         $q = Scholar::insertOrIgnore($arr);
+                        Scholar::where('spas_id',$spas_id)->where('subprogram_id',26)->update(['is_undergrad' => 0]);
                         if($q){
                             $a = ScholarAddress::insertOrIgnore((array)$address);
                             if($a){

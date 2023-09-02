@@ -131,6 +131,14 @@ trait ScholarUpdate {
         return $array;
     }
 
+    public static function types($request){
+        $array = [
+            Scholar::where('is_undergrad',1)->count(),
+            Scholar::where('is_undergrad',0)->count(),
+        ];
+        return $array;
+    }
+
     public static function active(){
         $data = EnrolledList::whereHas('semester',function ($query){
             $query->where('is_active',1);

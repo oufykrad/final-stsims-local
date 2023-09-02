@@ -184,7 +184,7 @@ export default {
             this.$refs.prospectus.show(data);
         },
         update(data){
-            this.course.prospectuses.unshift(data);
+            // this.course.prospectuses.unshift(data);
         }
     }
 }
