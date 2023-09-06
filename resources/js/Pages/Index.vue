@@ -15,10 +15,13 @@
                 <b-collapse class="navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav mx-auto mt-2 mt-lg-0" id="navbar-example">
                         <li class="nav-item">
-                            <b-link class="nav-link active" href="#hero">Home</b-link>
+                            <Link href="/" class="nav-link active">Home</Link>
                         </li>
                         <li class="nav-item">
-                            <b-link class="nav-link" href="#services">Services</b-link>
+                            <Link href="/search/schools" class="nav-link">Schools</Link>
+                        </li>
+                         <li class="nav-item">
+                            <Link href="/search/courses" class="nav-link">Courses</Link>
                         </li>
                         <li class="nav-item">
                             <b-link class="nav-link" href="#contact">Contact</b-link>
@@ -26,16 +29,13 @@
                     </ul>
 
                     <div class="">
-                        <router-link to="/auth/signin-basic"
-                            class="btn btn-link fw-medium text-decoration-none text-dark">Sign
-                            in</router-link>
-                        <router-link to="/auth/signup-basic" class="btn btn-primary">Sign Up</router-link>
+                        <Link href="/login" class="btn btn-primary">Sign In</Link>
                     </div>
                 </b-collapse>
             </b-container>
         </nav>
 
-        <section class="section pb-0 hero-section" id="hero">
+        <section class="section pb-0 hero-section" id="hero" style="height: 500px;">
             <div class="bg-overlay bg-overlay-pattern"></div>
             <b-container>
                 <b-row class="justify-content-center">
@@ -334,14 +334,64 @@
                 </b-row>
             </b-container>
         </footer>
-        <b-button variant="danger" class="btn-icon" id="back-to-top">
+        <b-button variant="danger" @click="topFunction" class="btn-icon" id="back-to-top">
             <i class="ri-arrow-up-line"></i>
         </b-button>
     </div>
 </template>
+
 <script>
-export default {
+export default { 
     layout: null,
-   
-}
+    data() {
+        return {
+            title: "Starter",
+            items: [{
+                text: "Pages",
+                href: "/",
+            },
+            {
+                text: "Starter",
+                active: true,
+            },
+            ],
+        };
+    },
+    methods: {
+
+        topFunction() {
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+        },
+
+    },
+    mounted() {
+
+        let backtoTop = document.getElementById("back-to-top");
+
+        if (backtoTop) {
+            backtoTop = document.getElementById("back-to-top");
+            window.onscroll = function () {
+                if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+                    backtoTop.style.display = "block";
+                } else {
+                    backtoTop.style.display = "none";
+                }
+            };
+        }
+
+        window.addEventListener('scroll', function (ev) {
+            ev.preventDefault();
+            var navbar = document.getElementById("navbar");
+            if (navbar) {
+                if (document.body.scrollTop >= 50 || document.documentElement.scrollTop >= 50) {
+                    navbar.classList.add("is-sticky");
+                } else {
+                    navbar.classList.remove("is-sticky");
+                }
+            }
+        });
+
+    },
+};
 </script>

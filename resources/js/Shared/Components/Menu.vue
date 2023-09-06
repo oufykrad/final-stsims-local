@@ -43,13 +43,19 @@
                     </Link>
                 </li>      -->
                 <li class="nav-item">
-                    <Link class="nav-link menu-link" :class="{'active': $page.component.startsWith('Modules/School') }" href="/schools">
+                    <Link class="nav-link menu-link" :class="{'active': $page.component.startsWith('Modules/Schools') }" href="/schools">
                         <i class='bx bxs-school'></i>
                         <span data-key="t-students">Schools</span>
                     </Link>
                 </li>   
+                 <li class="nav-item">
+                    <Link class="nav-link menu-link" :class="{'active': $page.component.startsWith('Modules/Qualifiers') }" href="/qualifiers">
+                        <i class='ri-user-add-fill'></i>
+                        <span data-key="t-students">Qualifiers</span>
+                    </Link>
+                </li>    
                 <li class="nav-item">
-                    <Link class="nav-link menu-link" :class="{'active': $page.component.startsWith('Modules/Scholar') }" href="/scholars">
+                    <Link class="nav-link menu-link" :class="{'active': $page.component.startsWith('Modules/Scholars') }" href="/scholars">
                         <i class='ri-team-fill'></i>
                         <span data-key="t-students">Scholars</span>
                     </Link>

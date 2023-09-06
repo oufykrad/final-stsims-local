@@ -13,6 +13,7 @@ class SearchResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $name.' '.$campus,
+            'courses' => CourseResource::collection($this->courses),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at
         ];
