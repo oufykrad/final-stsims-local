@@ -5,7 +5,7 @@
     <div class="chat-wrapper d-lg-flex gap-1 mx-n4 mt-n4 p-1">
         <div class="file-manager-sidebar">
             
-            <div class="p-4">
+            <div class="p-4 d-flex flex-column">
                 <div class="d-flex align-items-center mb-4">
                     <div class="avatar-sm flex-shrink-0">
                         <span class="avatar-title bg-light text-primary rounded-circle fs-3">
@@ -55,6 +55,27 @@
                             </tr>
                         </tbody>
                     </table>
+                </div>
+                <hr class="text-muted mt-n1 mb-3"/>
+                <h6 v-if="item.endorsements" class="fw-semibold text-primary">ENDORSEMENTS (<span class="text-danger">{{item.endorsements.length}}</span>):</h6>
+                <div data-simplebar :style="'height: '+hayt+'px'">
+                    <div class="p-3">
+
+                    <template v-for="(item, index) of item.endorsements" :key="index">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="flex-grow-1 ms-n2">
+                                <h6 class="fs-14 mb-0">{{ item.name }}</h6>
+                                <p class="text-muted fs-12 mb-0">
+                                <i class="ri-map-pin-fill text-primary fs-12 align-middle"></i>
+                                {{ item.endorser.name}}, {{item.endorser.region }}
+                                </p>
+                            </div>
+                            <div class="text-end">
+                               <button @click="viewendorse(item)" class="btn btn-sm btn-soft-secondary mt-n2 me-n2"><i class="ri-eye-fill"></i></button>
+                            </div>
+                        </div>
+                    </template>
+                    </div>
                 </div>
             </div>
         </div>
@@ -137,6 +158,7 @@
                                 <span :class="'badge '+list.status.color+' '+list.status.others">{{list.status.name}}</span>
                             </td>
                             <td class="text-end">
+                                <b-button v-if="list.status.name != 'Complete'" variant="soft-primary" @click="endorse(list)" v-b-tooltip.hover title="Endorse" size="sm" class="edit-list me-1"><i class="ri-swap-fill align-bottom"></i> </b-button>
                                 <b-button v-if="list.type.name != 'Enrolled'" @click="add(list)" variant="soft-primary" v-b-tooltip.hover title="Add Scholar" size="sm" class="edit-list me-1"><i class="ri-user-add-fill align-bottom"></i> </b-button>
                                 <b-button v-if="list.address.is_completed == 0" @click="update(list)" variant="soft-danger" v-b-tooltip.hover title="Update Address" size="sm" class="remove-list me-1"><i class="ri-map-pin-fill align-bottom"></i></b-button>
                                 <b-button variant="soft-primary" v-b-tooltip.hover title="Edit" size="sm" class="edit-list"><i class="ri-pencil-fill align-bottom"></i> </b-button>
@@ -149,21 +171,26 @@
         </div>
     </div>
     <Add ref="add"/>
+    <Endorse ref="endorse"/>
+    <ViewEndorse ref="viewendorse"/>
 </template>
 <script>
 import Add from './Modals/Add.vue';
+import Endorse from './Modals/Endorse';
+import ViewEndorse from './Modals/ViewEndorse.vue';
 import Pagination from "@/Shared/Components/Pagination.vue";
 import PageHeader from "@/Shared/Components/PageHeader.vue";
 export default {
-    components: { PageHeader, Pagination, Add },
+    components: { PageHeader, Pagination, Add, Endorse, ViewEndorse },
     props: ['statuses','programs'],
     data() {
         return {
             currentUrl: window.location.origin,
+            hayt: (window.innerHeight-630),
             title: "List of Qualifiers",
             items: [{text: "List",href: "/"},{text: "Qualifier",active: true}],
             options: ['Waiting','Deferment','Not Avail','Enrolled'],
-            options2: ['Complete','Lacking','Potential'],
+            options2: ['Completed','Lacking','Potential'],
             colors2: ['text-success','text-warning','text-danger'],
             colors: ['text-warning','text-danger','text-dark','text-success'],
             lists: [],
@@ -216,7 +243,7 @@ export default {
                         show: false
                     }
                 }
-            }
+            },
         };
     },
     created(){
@@ -301,7 +328,13 @@ export default {
                 this.pageNo = null;
             }
             this.fetch();
-        }
+        },
+        endorse(data){
+            this.$refs.endorse.show(data);
+        },
+        viewendorse(data){
+            this.$refs.viewendorse.show(data);
+        },
     }
 }
 </script>

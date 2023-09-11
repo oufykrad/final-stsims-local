@@ -1,5 +1,5 @@
 <template>
-    <b-modal v-model="showModal" title="Add as Scholar"  style="--vz-modal-width: 600px;" header-class="p-3 bg-light" class="v-modal-custom" modal-class="zoomIn" centered>    
+    <b-modal v-model="showModal" title="Endorse Qualifier"  style="--vz-modal-width: 600px;" header-class="p-3 bg-light" class="v-modal-custom" modal-class="zoomIn" centered>    
         <ul class="list-unstyled mb-0 vstack gap-3" v-if="user">
             <li>
                 <div class="d-flex align-items-center">
@@ -8,7 +8,7 @@
                     </div>
                     <div class="flex-grow-1 ms-3">
                         <h6 class="fs-14 mb-1 text-primary">{{user.profile.name}}</h6>
-                        <span :class="'badge bg-secondary '+user.status.color">{{user.status.name}}</span>
+                        <span :class="'badge bg-secondary '+user.status.color+' '+user.status.others">{{user.status.name}}</span>
                     </div>
                 </div>
             </li>
@@ -41,15 +41,7 @@
                         :show-labels="false">
                     </multiselect> 
                 </div>
-                 <div class="col-md-12 mt-2">
-                    <hr />
-                 </div>
-                <div class="col-md-12 mt-2">
-                    <div class="form-group">
-                        <label>Account No.: <span v-if="form.errors" v-text="form.errors.account_no" class="haveerror"></span></label>
-                        <input type="text" class="form-control" v-model="account_no">
-                    </div>
-                </div>
+                 
             </div>
         </b-form>
         <template v-slot:footer>
@@ -106,10 +98,9 @@ export default {
         create(){
              this.form = this.$inertia.form({
                 user: this.user,
-                school_id: this.school.id,
+                school: this.school,
                 course_id: this.course.course_id,
-                account_no: this.account_no,
-                type: 'enroll'
+                type: 'endorse'
             })
 
             this.form.post('/qualifiers',{
@@ -134,7 +125,7 @@ export default {
                 })
                 .catch(err => console.log(err));
             }
-        }
+        },
     }
 }
 </script>

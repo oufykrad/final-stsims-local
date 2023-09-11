@@ -14,6 +14,7 @@ class SearchResource extends JsonResource
             'id' => $this->id,
             'name' => $name.' '.$campus,
             'courses' => CourseResource::collection($this->courses),
+            'region' => $this->assigned_region,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at
         ];
